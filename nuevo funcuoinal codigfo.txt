@@ -1,0 +1,474 @@
+<?php
+/**
+ * Plugin Name: Pakda Hotspot
+ * Description: localStorage como salvoconducto + REPLACE atómico + API Kick + Sin freno de mano
+ * Version: 2.2.0 FINAL - BUSES (Salvoconducto)
+ * Author: Pakda
+ * 
+ * MEJORAS CRÍTICAS PARA BUSES:
+ * 1. SALVOCONDUCTO: localStorage permite navegar sin ?mac= en URL (v2.2)
+ *    - MikroTik redirige solo la primera vez con ?mac=
+ *    - JavaScript guarda MAC en localStorage (salvoconducto emitido)
+ *    - Usuario navega libremente por tienda (sin ?mac= en URL)
+ *    - En checkout, localStorage inyecta MAC en campo hidden
+ * 2. SIN FRENO DE MANO: Permite reintentos si webhook falla por mala señal
+ * 3. API KICK: Reconecta usuario inmediatamente sin esperar polling
+ * 4. REPLACE INTO: Más atómico y rápido que DELETE + INSERT
+ * 
+ * FLUJO COMPLETO:
+ * - Usuario conecta WiFi → MikroTik redirige con ?mac=XX:XX
+ * - JavaScript guarda MAC en localStorage (salvoconducto)
+ * - Usuario navega a /producto/, /checkout/ (sin ?mac= en URL)
+ * - Checkout inyecta MAC desde localStorage
+ * - Usuario paga → Sistema activa con MAC correcta
+ */
+
+if (!defined('ABSPATH')) exit;
+
+// Configuración
+if (!defined('PAKDA_DB_HOST')) define('PAKDA_DB_HOST', '207.180.206.65');
+if (!defined('PAKDA_DB_PORT')) define('PAKDA_DB_PORT', 3306);
+if (!defined('PAKDA_DB_USER')) define('PAKDA_DB_USER', 'radius');
+if (!defined('PAKDA_DB_PASS')) define('PAKDA_DB_PASS', 's1p2aa3y5A');
+if (!defined('PAKDA_DB_NAME')) define('PAKDA_DB_NAME', 'radius');
+
+/**
+ * LOGGING
+ */
+function pakda_log($msg) {
+    error_log('[PAKDA v2.2 SALVOCONDUCTO] ' . $msg);
+}
+
+function pakda_normalizar_mac($mac_raw) {
+    $mac = strtoupper(trim((string)$mac_raw));
+    $mac = str_replace('-', ':', $mac);
+    $mac = preg_replace('/[^0-9A-F:]/', '', $mac);
+    if (preg_match('/^[0-9A-F]{12}$/', $mac)) {
+        $mac = implode(':', str_split($mac, 2));
+    }
+    return preg_match('/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/', $mac) ? $mac : '';
+}
+
+/**
+ * SESIONES (solo para otros usos, NO para MAC)
+ */
+add_action('init', function () {
+    if (is_admin() || wp_doing_ajax() || (defined('REST_REQUEST') && REST_REQUEST)) return;
+    if (!session_id() && !headers_sent()) {
+        @session_start();
+    }
+}, 1);
+
+/**
+ * NO HAY REDIRECCION DEL SERVIDOR
+ * El MikroTik ya redirige automáticamente cuando el usuario no está autenticado
+ * Nosotros solo capturamos la MAC cuando llega con ?mac= en URL
+ * localStorage actúa como "salvoconducto" para navegar libremente
+ */
+
+/**
+ * INYECTAR CAMPO HIDDEN CON JAVASCRIPT
+ * NO guardamos en cookies/sesión del servidor
+ * SOLO en localStorage del navegador
+ */
+add_action('wp_footer', function() {
+    if (is_admin() || wp_doing_ajax()) return;
+    
+    // Solo en páginas públicas
+    ?>
+    <script>
+    (function() {
+        // Capturar MAC de la URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var mac = urlParams.get('mac');
+        
+        if (mac) {
+            // Limpiar formato
+            mac = mac.toUpperCase().replace(/-/g, ':');
+            
+            // Guardar SOLO en localStorage del navegador
+            if (localStorage) {
+                var oldMac = localStorage.getItem('pakda_current_mac');
+                
+                // Si es DIFERENTE, limpiar todo
+                if (oldMac && oldMac !== mac) {
+                    console.log('PAKDA: Nueva MAC detectada, limpiando cache');
+                    localStorage.clear();
+                }
+                
+                localStorage.setItem('pakda_current_mac', mac);
+                console.log('PAKDA: MAC guardada en localStorage:', mac);
+            }
+        }
+        
+        // En checkout, inyectar campo hidden
+        if (document.body.classList.contains('woocommerce-checkout')) {
+            var storedMac = localStorage ? localStorage.getItem('pakda_current_mac') : null;
+            
+            if (storedMac) {
+                // Buscar formulario de checkout
+                var checkoutForm = document.querySelector('form.checkout');
+                
+                if (checkoutForm) {
+                    // Eliminar campo anterior si existe
+                    var oldField = document.getElementById('pakda_mac_field');
+                    if (oldField) oldField.remove();
+                    
+                    // Crear nuevo campo hidden
+                    var hiddenField = document.createElement('input');
+                    hiddenField.type = 'hidden';
+                    hiddenField.id = 'pakda_mac_field';
+                    hiddenField.name = 'pakda_mac_from_browser';
+                    hiddenField.value = storedMac;
+                    
+                    checkoutForm.appendChild(hiddenField);
+                    console.log('PAKDA: Campo hidden inyectado con MAC:', storedMac);
+                }
+            } else {
+                console.warn('PAKDA: No hay MAC en localStorage');
+            }
+        }
+    })();
+    </script>
+    <?php
+}, 999);
+
+/**
+ * AUTOLOGIN
+ */
+add_action('init', function() {
+    if (isset($_GET['pakda_action']) && $_GET['pakda_action'] === 'autologin') {
+        global $wpdb;
+        
+        $token = sanitize_text_field($_GET['token'] ?? ''); 
+        
+        if (empty($token)) {
+            pakda_log("⚠️ Autologin sin token");
+            wp_die("Error: Enlace inválido.", "Error Pakda");
+        }
+
+        $oid = $wpdb->get_var($wpdb->prepare(
+            "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_pakda_autologin_token' AND meta_value = %s LIMIT 1", 
+            $token
+        ));
+
+        if (!$oid) {
+            echo "<html><head><meta http-equiv='refresh' content='2'></head><body style='background:#0b1220;color:#fff;text-align:center;padding-top:100px;font-family:sans-serif;'><h2>⏳ Validando...</h2></body></html>";
+            exit;
+        }
+
+        $order = wc_get_order($oid);
+        $mac = $order->get_meta('_customer_mac');
+        $gw = 'http://192.168.100.1/login';
+
+        ?>
+        <html>
+        <body style="background:#0b1220;color:#fff;text-align:center;padding-top:100px;font-family:sans-serif;">
+            <h2 id="st" style="color:#fbbf24;">🚀 ¡PAGO CONFIRMADO!</h2>
+            <script>
+                setTimeout(function(){ 
+                    document.getElementById("st").innerHTML = "✅ ¡CONECTADO!";
+                    document.getElementById("st").style.color = "#34d399";
+                    setTimeout(function(){ 
+                        window.location.href = "<?php echo $gw; ?>?username=<?php echo urlencode($mac); ?>&password=<?php echo urlencode($mac); ?>&dst=https://www.google.com"; 
+                    }, 500); 
+                }, 1000);
+            </script>
+        </body>
+        </html>
+        <?php
+        exit;
+    }
+}, 10);
+
+/**
+ * GUARDAR MAC EN PEDIDO
+ * SOLO desde campo hidden (JavaScript)
+ * NO usar cookies/sesión del servidor
+ */
+add_action('woocommerce_checkout_create_order', function($order, $data) {
+    pakda_log("═══════════════════════════════════════");
+    pakda_log("📦 CHECKOUT - Creando pedido (SIN CACHE)");
+    
+    $mac_raw = '';
+    $source = '';
+    
+    // SOLO desde campo hidden (JavaScript localStorage)
+    if (!empty($_POST['pakda_mac_from_browser'])) {
+        $mac_raw = $_POST['pakda_mac_from_browser'];
+        $source = 'BROWSER localStorage';
+        pakda_log("✅ MAC desde localStorage del navegador: $mac_raw");
+    } else {
+        pakda_log("❌ ERROR: No se recibió MAC del navegador");
+        pakda_log("POST completo: " . print_r($_POST, true));
+    }
+    
+    if (empty($mac_raw)) {
+        pakda_log("❌ ERROR CRÍTICO: No hay MAC disponible");
+        pakda_log("═══════════════════════════════════════");
+        return;
+    }
+    
+    $mac = pakda_normalizar_mac($mac_raw);
+    
+    if ($mac) {
+        $order->update_meta_data('_customer_mac', $mac);
+        $order->update_meta_data('_pakda_mac_source', $source);
+        $order->update_meta_data('_pakda_mac_captured_at', date('Y-m-d H:i:s'));
+        
+        pakda_log("✅ MAC GUARDADA: $mac (source: $source)");
+    } else {
+        pakda_log("❌ MAC inválida después de normalizar: $mac_raw");
+    }
+    
+    pakda_log("═══════════════════════════════════════");
+}, 10, 2);
+
+/**
+ * ACTIVACIÓN RADIUS
+ */
+add_action('woocommerce_payment_complete', 'pakda_activar_wifi_radius', 20);
+add_action('woocommerce_order_status_processing', 'pakda_activar_wifi_radius', 20);
+add_action('woocommerce_order_status_completed', 'pakda_activar_wifi_radius', 20);
+
+function pakda_activar_wifi_radius($order_id) {
+    pakda_log("═══════════════════════════════════════");
+    pakda_log("🔔 ACTIVACIÓN - Pedido #$order_id");
+    
+    // SIN FRENO DE MANO - Permitir reintentos si falla webhook
+    // No verificamos _pakda_wifi_activado para permitir que thank you page reintente
+
+    $order = wc_get_order($order_id);
+    if (!$order) {
+        pakda_log("❌ Pedido no existe");
+        pakda_log("═══════════════════════════════════════");
+        return;
+    }
+
+    $mac = pakda_normalizar_mac($order->get_meta('_customer_mac'));
+    
+    pakda_log("MAC: " . ($mac ? $mac : "VACÍA"));
+    
+    if (!$mac) {
+        pakda_log("❌ MAC faltante");
+        $order->add_order_note('⚠️ PAKDA: MAC faltante');
+        pakda_log("═══════════════════════════════════════");
+        return;
+    }
+
+    // Determinar plan
+    $seconds = 7200;
+    foreach ($order->get_items() as $item) {
+        $n = mb_strtolower($item->get_name());
+        
+        if (strpos($n, 'ilimitado') !== false) {
+            $seconds = 259200;
+            pakda_log("Plan: ILIMITADO (3 días)");
+        } elseif (strpos($n, '2 horas') !== false || strpos($n, '2 hora') !== false) {
+            $seconds = 7200;
+            pakda_log("Plan: 2 HORAS");
+        }
+        break;
+    }
+
+    // Conexión DB
+    pakda_log("Conectando MySQL...");
+    $db = mysqli_init();
+    mysqli_options($db, MYSQLI_OPT_CONNECT_TIMEOUT, 5);
+    
+    if (!@mysqli_real_connect($db, PAKDA_DB_HOST, PAKDA_DB_USER, PAKDA_DB_PASS, PAKDA_DB_NAME, PAKDA_DB_PORT)) {
+        pakda_log("❌ Conexión falló: " . mysqli_connect_error());
+        pakda_log("═══════════════════════════════════════");
+        return;
+    }
+    
+    pakda_log("✅ MySQL OK");
+    $db->set_charset('utf8mb4');
+
+    // REPLACE INTO (atómico) en vez de DELETE + INSERT
+    pakda_log("Usando REPLACE INTO (atómico)...");
+    
+    $stmt = $db->prepare("REPLACE INTO radcheck (username, attribute, op, value) VALUES (?, 'Cleartext-Password', ':=', ?)");
+    $stmt->bind_param("ss", $mac, $mac);
+    $ok1 = $stmt->execute();
+    pakda_log("REPLACE radcheck: " . ($ok1 ? "OK" : "FALLO - " . $db->error));
+    $stmt->close();
+    
+    $stmt = $db->prepare("REPLACE INTO radreply (username, attribute, op, value) VALUES (?, 'Mikrotik-Group', ':=', 'full')");
+    $stmt->bind_param("s", $mac);
+    $ok2 = $stmt->execute();
+    pakda_log("REPLACE Mikrotik-Group: " . ($ok2 ? "OK" : "FALLO - " . $db->error));
+    $stmt->close();
+    
+    $time_str = (string)$seconds;
+    $stmt = $db->prepare("REPLACE INTO radreply (username, attribute, op, value) VALUES (?, 'Session-Timeout', ':=', ?)");
+    $stmt->bind_param("ss", $mac, $time_str);
+    $ok3 = $stmt->execute();
+    pakda_log("REPLACE Session-Timeout: " . ($ok3 ? "OK" : "FALLO - " . $db->error));
+    $stmt->close();
+    
+    $stmt = $db->prepare("REPLACE INTO radreply (username, attribute, op, value) VALUES (?, 'Idle-Timeout', ':=', '1800')");
+    $stmt->bind_param("s", $mac);
+    $ok4 = $stmt->execute();
+    pakda_log("REPLACE Idle-Timeout: " . ($ok4 ? "OK" : "FALLO - " . $db->error));
+    $stmt->close();
+    
+    $db->close();
+
+    if ($ok1 && $ok2 && $ok3 && $ok4) {
+        update_post_meta($order_id, '_pakda_wifi_activado', 'yes');
+        update_post_meta($order_id, '_wifi_username', $mac);
+        update_post_meta($order_id, '_wifi_time', $seconds);
+        
+        $order->add_order_note("✅ PAKDA: WiFi activado para $mac");
+        pakda_log("🚀 ✅ ÉXITO - WiFi activado");
+        
+        // ═══════════════════════════════════════════════════════
+        // API KICK (PATEO) - Reconectar usuario inmediatamente
+        // ═══════════════════════════════════════════════════════
+        pakda_log("🦶 Ejecutando API Kick para reconexión inmediata...");
+        
+        $kick_url = "http://207.180.206.65/api_pakda.php?mac=" . urlencode($mac);
+        
+        $response = wp_remote_get($kick_url, array(
+            'timeout' => 5,
+            'sslverify' => false
+        ));
+        
+        if (is_wp_error($response)) {
+            pakda_log("⚠️ API Kick falló: " . $response->get_error_message());
+        } else {
+            $body = wp_remote_retrieve_body($response);
+            pakda_log("✅ API Kick ejecutado - Respuesta: " . $body);
+        }
+        
+    } else {
+        pakda_log("❌ Falló uno o más REPLACEs");
+        $order->add_order_note("❌ PAKDA: Error activación");
+    }
+    
+    pakda_log("═══════════════════════════════════════");
+}
+
+/**
+ * WEBHOOK CULQI
+ */
+add_action('rest_api_init', function () {
+    register_rest_route('pakda/v1', '/webhook-culqi', [
+        'methods'  => 'POST',
+        'callback' => 'pakda_webhook_handler',
+        'permission_callback' => 'pakda_webhook_authenticate'
+    ]);
+});
+
+function pakda_webhook_authenticate($request) {
+    $auth_header = $request->get_header('authorization');
+    
+    if (empty($auth_header)) {
+        pakda_log("⚠️ Webhook sin auth");
+        return true;
+    }
+    
+    if (preg_match('/Basic\s+(.*)$/i', $auth_header, $matches)) {
+        $credentials = base64_decode($matches[1]);
+        list($user, $pass) = explode(':', $credentials, 2);
+        
+        if ($user === 'pakda_webhook_user' && $pass === 'PakdaW3bh00k2026!') {
+            pakda_log("✅ Webhook autenticado");
+            return true;
+        } else {
+            pakda_log("❌ Credenciales incorrectas");
+            return new WP_Error('unauthorized', 'Credenciales inválidas', ['status' => 401]);
+        }
+    }
+    
+    return true;
+}
+
+function pakda_webhook_handler($request) {
+    pakda_log("🔔 WEBHOOK Culqi");
+    
+    $data = $request->get_json_params();
+    $oid = $data['data']['metadata']['order_id'] ?? 0;
+
+    if (!$oid) {
+        pakda_log("⚠️ Sin order_id");
+        return new WP_REST_Response('Missing order_id', 400);
+    }
+
+    $order = wc_get_order($oid);
+    
+    if (!$order) {
+        pakda_log("❌ Orden no encontrada");
+        return new WP_REST_Response('Order not found', 404);
+    }
+    
+    if ($order->is_paid()) {
+        pakda_log("ℹ️ Ya pagada");
+        return new WP_REST_Response('Already processed', 200);
+    }
+    
+    $order->payment_complete();
+    pakda_log("✅ Marcada como pagada");
+    
+    return new WP_REST_Response('OK', 200);
+}
+
+/**
+ * THANK YOU PAGE
+ */
+add_action('woocommerce_thankyou', function($order_id) {
+    if (!$order_id) return;
+    
+    pakda_activar_wifi_radius($order_id);
+
+    $token = get_post_meta($order_id, '_pakda_autologin_token', true);
+    
+    if (empty($token)) {
+        $token = wp_generate_password(32, false); 
+        update_post_meta($order_id, '_pakda_autologin_token', $token);
+    }
+    
+    $url = add_query_arg([
+        'pakda_action' => 'autologin', 
+        'token' => $token
+    ], home_url('/'));
+    
+    if (!empty($token)) {
+        echo '<div style="text-align:center;margin:20px;padding:30px;border:2px solid #34d399;background:#f0fff4;border-radius:15px;">
+                <h2 style="color:#065f46;">✅ ¡PAGO EXITOSO!</h2>
+                <p style="color:#047857;">Internet activado</p>
+                <a href="'.esc_url($url).'" style="background:#059669;color:white;padding:15px 30px;text-decoration:none;border-radius:8px;font-weight:bold;">Conectar ahora</a>
+              </div>';
+        
+        echo '<script>setTimeout(function(){ window.location.href = "' . esc_url_raw($url) . '"; }, 1500);</script>';
+    }
+});
+
+/**
+ * EMAIL
+ */
+add_action('woocommerce_payment_complete', function($order_id) {
+    $order = wc_get_order($order_id);
+    if(!$order) return;
+    
+    $first_name = $order->get_billing_first_name();
+    $mac = $order->get_meta('_customer_mac');
+    $plan = ""; 
+    foreach ($order->get_items() as $item) { $plan = $item->get_name(); break; }
+
+    $to = $order->get_billing_email();
+    $subject = '🚀 WiFi Pakda Activado';
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+
+    $message = "
+    <div style='background:#111827; color:#ffffff; padding:40px; font-family:sans-serif; border-radius:15px; max-width:500px; margin:auto;'>
+        <h2>Hola {$first_name} 👋</h2>
+        <p style='font-size:18px; color:#10b981;'>🎉 ¡WiFi PAKDA activado!</p>
+        <p>📱 <b>Dispositivo:</b> <code>{$mac}</code></p>
+        <p>📦 <b>Plan:</b> {$plan}</p>
+        <p style='text-align:center; font-size:12px; color:#6b7280; margin-top:30px;'>Gracias por confiar en Pakda 🙌</p>
+    </div>";
+
+    wp_mail($to, $subject, $message, $headers);
+}, 25);

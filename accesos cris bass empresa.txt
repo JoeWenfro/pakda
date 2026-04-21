@@ -1,0 +1,4 @@
+ACCESOS WORDPRESS
+iNSTALACCION URL : https://pakda.com.pe/wp
+USER : admin
+PASS : s1p2aa3y5

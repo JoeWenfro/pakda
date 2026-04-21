@@ -1,0 +1,6 @@
+user admin
+Pass s1p2aa3y5A
+
+
+
+contraseña de mariadb: s1p2aa3y5A

@@ -1,0 +1,2479 @@
+=====================================
+PAKDA HOTSPOT - CONFIGURACIÓN COMPLETA
+Fecha: Tue Feb 24 20:33:52 CET 2026
+=====================================
+
+## 1. SISTEMA
+PRETTY_NAME="Ubuntu 24.04.3 LTS"
+6.8.0-90-generic
+
+## 2. SERVICIOS
+○ freeradius.service - FreeRADIUS multi-protocol policy server
+     Loaded: loaded (/usr/lib/systemd/system/freeradius.service; enabled; preset: enabled)
+     Active: inactive (dead) since Tue 2026-02-10 00:04:03 CET; 2 weeks 0 days ago
+   Duration: 9min 23.976s
+       Docs: man:radiusd(8)
+             man:radiusd.conf(5)
+             http://wiki.freeradius.org/
+             http://networkradius.com/doc/
+    Process: 1693863 ExecStartPre=/usr/sbin/freeradius $FREERADIUS_OPTIONS -Cx -lstdout (code=exited, status=0/SUCCESS)
+    Process: 1693865 ExecStart=/usr/sbin/freeradius -f $FREERADIUS_OPTIONS (code=exited, status=0/SUCCESS)
+   Main PID: 1693865 (code=exited, status=0/SUCCESS)
+     Status: "Processing requests"
+        CPU: 454ms
+
+Feb 09 23:54:38 vmi3041985 freeradius[1693863]: Configuration appears to be OK
+Feb 09 23:54:39 vmi3041985 freeradius[1693865]: WARNING: MYSQL_OPT_RECONNECT is deprecated and will be removed in a future version.
+Feb 09 23:54:39 vmi3041985 freeradius[1693865]: WARNING: MYSQL_OPT_RECONNECT is deprecated and will be removed in a future version.
+Feb 09 23:54:39 vmi3041985 freeradius[1693865]: WARNING: MYSQL_OPT_RECONNECT is deprecated and will be removed in a future version.
+Feb 09 23:54:39 vmi3041985 freeradius[1693865]: WARNING: MYSQL_OPT_RECONNECT is deprecated and will be removed in a future version.
+Feb 09 23:54:39 vmi3041985 freeradius[1693865]: WARNING: MYSQL_OPT_RECONNECT is deprecated and will be removed in a future version.
+Feb 09 23:54:39 vmi3041985 systemd[1]: Started freeradius.service - FreeRADIUS multi-protocol policy server.
+Feb 10 00:04:03 vmi3041985 systemd[1]: Stopping freeradius.service - FreeRADIUS multi-protocol policy server...
+Feb 10 00:04:03 vmi3041985 systemd[1]: freeradius.service: Deactivated successfully.
+Feb 10 00:04:03 vmi3041985 systemd[1]: Stopped freeradius.service - FreeRADIUS multi-protocol policy server.
+● mariadb.service - MariaDB 10.11.14 database server
+     Loaded: loaded (/usr/lib/systemd/system/mariadb.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-02-09 07:43:05 CET; 2 weeks 1 day ago
+       Docs: man:mariadbd(8)
+             https://mariadb.com/kb/en/library/systemd/
+   Main PID: 1506461 (mariadbd)
+     Status: "Taking your SQL requests now..."
+      Tasks: 9 (limit: 30712)
+     Memory: 99.1M (peak: 101.7M)
+        CPU: 6min 14.133s
+     CGroup: /system.slice/mariadb.service
+             └─1506461 /usr/sbin/mariadbd
+
+Feb 24 20:24:05 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:05 72288 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:05 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:05 72289 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:05 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:05 72290 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:05 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:05 72291 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:05 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:05 72292 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:06 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:06 72293 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:06 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:06 72294 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:06 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:06 72295 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:06 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:06 72296 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+Feb 24 20:24:06 vmi3041985 mariadbd[1506461]: 2026-02-24 20:24:06 72297 [Warning] Access denied for user 'root'@'45.156.87.205' (using password: YES)
+● apache2.service - The Apache HTTP Server
+     Loaded: loaded (/usr/lib/systemd/system/apache2.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-02-19 06:56:36 CET; 5 days ago
+       Docs: https://httpd.apache.org/docs/2.4/
+    Process: 1988184 ExecStart=/usr/sbin/apachectl start (code=exited, status=0/SUCCESS)
+    Process: 2125958 ExecReload=/usr/sbin/apachectl graceful (code=exited, status=0/SUCCESS)
+   Main PID: 1988192 (apache2)
+      Tasks: 11 (limit: 4653)
+     Memory: 24.9M (peak: 52.1M)
+        CPU: 55.832s
+     CGroup: /system.slice/apache2.service
+             ├─1988192 /usr/sbin/apache2 -k start
+             ├─2125966 /usr/sbin/apache2 -k start
+             ├─2125967 /usr/sbin/apache2 -k start
+             ├─2125968 /usr/sbin/apache2 -k start
+             ├─2125969 /usr/sbin/apache2 -k start
+             ├─2125970 /usr/sbin/apache2 -k start
+             ├─2126924 /usr/sbin/apache2 -k start
+             ├─2127115 /usr/sbin/apache2 -k start
+             ├─2127117 /usr/sbin/apache2 -k start
+             ├─2127118 /usr/sbin/apache2 -k start
+             └─2127119 /usr/sbin/apache2 -k start
+
+Feb 20 00:00:06 vmi3041985 systemd[1]: Reloading apache2.service - The Apache HTTP Server...
+Feb 20 00:00:06 vmi3041985 systemd[1]: Reloaded apache2.service - The Apache HTTP Server.
+Feb 21 00:00:17 vmi3041985 systemd[1]: Reloading apache2.service - The Apache HTTP Server...
+Feb 21 00:00:17 vmi3041985 systemd[1]: Reloaded apache2.service - The Apache HTTP Server.
+Feb 22 00:00:02 vmi3041985 systemd[1]: Reloading apache2.service - The Apache HTTP Server...
+Feb 22 00:00:02 vmi3041985 systemd[1]: Reloaded apache2.service - The Apache HTTP Server.
+Feb 23 00:00:00 vmi3041985 systemd[1]: Reloading apache2.service - The Apache HTTP Server...
+Feb 23 00:00:01 vmi3041985 systemd[1]: Reloaded apache2.service - The Apache HTTP Server.
+Feb 24 00:00:02 vmi3041985 systemd[1]: Reloading apache2.service - The Apache HTTP Server...
+Feb 24 00:00:02 vmi3041985 systemd[1]: Reloaded apache2.service - The Apache HTTP Server.
+
+## 3. PUERTOS
+systemd         1            root  181u  IPv4     5913      0t0  TCP *:22 (LISTEN)
+systemd         1            root  183u  IPv6     7340      0t0  TCP *:22 (LISTEN)
+sshd       328919            root    3u  IPv4     5913      0t0  TCP *:22 (LISTEN)
+sshd       328919            root    4u  IPv6     7340      0t0  TCP *:22 (LISTEN)
+systemd-r  328935 systemd-resolve   15u  IPv4  3035582      0t0  TCP 127.0.0.53:53 (LISTEN)
+systemd-r  328935 systemd-resolve   17u  IPv4  3035584      0t0  TCP 127.0.0.54:53 (LISTEN)
+mariadbd  1506461           mysql   25u  IPv4  6050433      0t0  TCP *:3306 (LISTEN)
+apache2   1988192            root    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2125966        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2125967        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2125968        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2125969        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2125970        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2126924        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2127115        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2127117        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2127118        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+apache2   2127119        www-data    4u  IPv6  9794861      0t0  TCP *:80 (LISTEN)
+sshd      2144462            root    5u  IPv6 12240932      0t0  TCP [::1]:6010 (LISTEN)
+sshd      2144462            root    7u  IPv4 12240933      0t0  TCP 127.0.0.1:6010 (LISTEN)
+
+## 4. FREERADIUS CONFIG
+=== /etc/freeradius/3.0/sites-enabled/default ===
+######################################################################
+#
+#	As of 2.0.0, FreeRADIUS supports virtual hosts using the
+#	"server" section, and configuration directives.
+#
+#	Virtual hosts should be put into the "sites-available"
+#	directory.  Soft links should be created in the "sites-enabled"
+#	directory to these files.  This is done in a normal installation.
+#
+#	If you are using 802.1X (EAP) authentication, please see also
+#	the "inner-tunnel" virtual server.  You will likely have to edit
+#	that, too, for authentication to work.
+#
+#	$Id: b4339bde9e22910fb01159fd89b6a92cbb2cae24 $
+#
+######################################################################
+#
+#	Read "man radiusd" before editing this file.  See the section
+#	titled DEBUGGING.  It outlines a method where you can quickly
+#	obtain the configuration you want, without running into
+#	trouble.  See also "man unlang", which documents the format
+#	of this file.
+#
+#	This configuration is designed to work in the widest possible
+#	set of circumstances, with the widest possible number of
+#	authentication methods.  This means that in general, you should
+#	need to make very few changes to this file.
+#
+#	The best way to configure the server for your local system
+#	is to CAREFULLY edit this file.  Most attempts to make large
+#	edits to this file will BREAK THE SERVER.  Any edits should
+#	be small, and tested by running the server with "radiusd -X".
+#	Once the edits have been verified to work, save a copy of these
+#	configuration files somewhere.  (e.g. as a "tar" file).  Then,
+#	make more edits, and test, as above.
+#
+#	There are many "commented out" references to modules such
+#	as ldap, sql, etc.  These references serve as place-holders.
+       pap
+#	If you need the functionality of that module, then configure
+#	it in radiusd.conf, and un-comment the references to it in
+#	this file.  In most cases, those small changes will result
+#	in the server being able to connect to the DB, and to
+#	authenticate users.
+#
+######################################################################
+
+server default {
+#
+#  If you want the server to listen on additional addresses, or on
+#  additional ports, you can use multiple "listen" sections.
+#
+#  Each section make the server listen for only one type of packet,
+#  therefore authentication and accounting have to be configured in
+#  different sections.
+#
+#  The server ignore all "listen" section if you are using '-i' and '-p'
+#  on the command line.
+#
+listen {
+	#  Type of packets to listen for.
+	#  Allowed values are:
+	#	auth	listen for authentication packets
+	#	acct	listen for accounting packets
+	#       auth+acct listen for both authentication and accounting packets
+	#	proxy   IP to use for sending proxied packets
+	#	detail  Read from the detail file.  For examples, see
+	#               raddb/sites-available/copy-acct-to-home-server
+	#	status  listen for Status-Server packets.  For examples,
+	#		see raddb/sites-available/status
+	#	coa     listen for CoA-Request and Disconnect-Request
+	#		packets.  For examples, see the file
+	#		raddb/sites-available/coa
+	#
+	type = auth
+
+	#  Note: "type = proxy" lets you control the source IP used for
+	#        proxying packets, with some limitations:
+	#
+	#    * A proxy listener CANNOT be used in a virtual server section.
+	#    * You should probably set "port = 0".
+	#    * Any "clients" configuration will be ignored.
+	#
+	#  See also proxy.conf, and the "src_ipaddr" configuration entry
+	#  in the sample "home_server" section.  When you specify the
+	#  source IP address for packets sent to a home server, the
+	#  proxy listeners are automatically created.
+
+	#  ipaddr/ipv4addr/ipv6addr - IP address on which to listen.
+	#  If multiple ones are listed, only the first one will
+	#  be used, and the others will be ignored.
+	#
+	#  The configuration options accept the following syntax:
+	#
+	#  ipv4addr - IPv4 address (e.g.192.0.2.3)
+	#  	    - wildcard (i.e. *)
+	#  	    - hostname (radius.example.com)
+	#  	      Only the A record for the host name is used.
+	#	      If there is no A record, an error is returned,
+	#	      and the server fails to start.
+	#
+	#  ipv6addr - IPv6 address (e.g. 2001:db8::1)
+	#  	    - wildcard (i.e. *)
+	#  	    - hostname (radius.example.com)
+	#  	      Only the AAAA record for the host name is used.
+	#	      If there is no AAAA record, an error is returned,
+	#	      and the server fails to start.
+	#
+	#  ipaddr   - IPv4 address as above
+	#  	    - IPv6 address as above
+	#  	    - wildcard (i.e. *), which means IPv4 wildcard.
+	#	    - hostname
+	#	      If there is only one A or AAAA record returned
+	#	      for the host name, it is used.
+	#	      If multiple A or AAAA records are returned
+	#	      for the host name, only the first one is used.
+	#	      If both A and AAAA records are returned
+	#	      for the host name, only the A record is used.
+	#
+	# ipv4addr = *
+	# ipv6addr = *
+	ipaddr = *
+
+	#  Port on which to listen.
+	#  Allowed values are:
+	#	integer port number (1812)
+	#	0 means "use /etc/services for the proper port"
+	port = 1700
+
+	#  Some systems support binding to an interface, in addition
+	#  to the IP address.  This feature isn't strictly necessary,
+	#  but for sites with many IP addresses on one interface,
+	#  it's useful to say "listen on all addresses for eth0".
+	#
+	#  If your system does not support this feature, you will
+	#  get an error if you try to use it.
+	#
+#	interface = eth0
+
+	#  Per-socket lists of clients.  This is a very useful feature.
+	#
+	#  The name here is a reference to a section elsewhere in
+	#  radiusd.conf, or clients.conf.  Having the name as
+	#  a reference allows multiple sockets to use the same
+	#  set of clients.
+	#
+	#  If this configuration is used, then the global list of clients
+	#  is IGNORED for this "listen" section.  Take care configuring
+	#  this feature, to ensure you don't accidentally disable a
+	#  client you need.
+	#
+	#  See clients.conf for the configuration of "per_socket_clients".
+	#
+#	clients = per_socket_clients
+
+	#
+	#  Set the default UDP receive buffer size.  In most cases,
+	#  the default values set by the kernel are fine.  However, in
+	#  some cases the NASes will send large packets, and many of
+	#  them at a time.  It is then possible to overflow the
+	#  buffer, causing the kernel to drop packets before they
+	#  reach FreeRADIUS.  Increasing the size of the buffer will
+	#  avoid these packet drops.
+	#
+#	recv_buff = 65536
+
+	#
+	#  Connection limiting for sockets with "proto = tcp".
+	#
+	#  This section is ignored for other kinds of sockets.
+	#
+	limit {
+	      #
+	      #  Limit the number of simultaneous TCP connections to the socket
+	      #
+	      #  The default is 16.
+	      #  Setting this to 0 means "no limit"
+	      max_connections = 16
+
+	      #  The per-socket "max_requests" option does not exist.
+
+	      #
+	      #  The lifetime, in seconds, of a TCP connection.  After
+	      #  this lifetime, the connection will be closed.
+	      #
+	      #  Setting this to 0 means "forever".
+	      lifetime = 0
+
+	      #
+	      #  The idle timeout, in seconds, of a TCP connection.
+	      #  If no packets have been received over the connection for
+	      #  this time, the connection will be closed.
+	      #
+	      #  Setting this to 0 means "no timeout".
+	      #
+	      #  We STRONGLY RECOMMEND that you set an idle timeout.
+	      #
+	      idle_timeout = 30
+	}
+}
+
+#
+#  This second "listen" section is for listening on the accounting
+#  port, too.
+#
+listen {
+	ipaddr = *
+#	ipv6addr = ::
+	port = 1701
+	type = acct
+#	interface = eth0
+#	clients = per_socket_clients
+
+	limit {
+		#  The number of packets received can be rate limited via the
+		#  "max_pps" configuration item.  When it is set, the server
+		#  tracks the total number of packets received in the previous
+		#  second.  If the count is greater than "max_pps", then the
+		#  new packet is silently discarded.  This helps the server
+		#  deal with overload situations.
+		#
+		#  The packets/s counter is tracked in a sliding window.  This
+		#  means that the pps calculation is done for the second
+		#  before the current packet was received.  NOT for the current
+		#  wall-clock second, and NOT for the previous wall-clock second.
+		#
+		#  Useful values are 0 (no limit), or 100 to 10000.
+		#  Values lower than 100 will likely cause the server to ignore
+		#  normal traffic.  Few systems are capable of handling more than
+		#  10K packets/s.
+		#
+		#  It is most useful for accounting systems.  Set it to 50%
+		#  more than the normal accounting load, and you can be sure that
+		#  the server will never get overloaded
+		#
+#		max_pps = 0
+
+		# Only for "proto = tcp". These are ignored for "udp" sockets.
+		#
+#		idle_timeout = 0
+#		lifetime = 0
+#		max_connections = 0
+	}
+}
+
+# IPv6 versions of the above - read their full config to understand options
+listen {
+	type = auth
+	ipv6addr = ::	# any.  ::1 == localhost
+	port = 1700
+#	interface = eth0
+#	clients = per_socket_clients
+	limit {
+	      max_connections = 16
+	      lifetime = 0
+	      idle_timeout = 30
+	}
+}
+
+listen {
+	ipv6addr = ::
+	port = 1701
+	type = acct
+#	interface = eth0
+#	clients = per_socket_clients
+
+	limit {
+#		max_pps = 0
+#		idle_timeout = 0
+#		lifetime = 0
+#		max_connections = 0
+	}
+}
+
+#  Authorization. First preprocess (hints and huntgroups files),
+#  then realms, and finally look in the "users" file.
+#
+#  Any changes made here should also be made to the "inner-tunnel"
+#  virtual server.
+#
+#  The order of the realm modules will determine the order that
+#  we try to find a matching realm.
+#
+#  Make *sure* that 'preprocess' comes before any realm if you
+#  need to setup hints for the remote radius server
+authorize {
+       sql
+       pap
+	#
+	#  Take a User-Name, and perform some checks on it, for spaces and other
+	#  invalid characters.  If the User-Name appears invalid, reject the
+	#  request.
+	#
+	#  See policy.d/filter for the definition of the filter_username policy.
+	#
+	filter_username
+
+	#
+	#  Some broken equipment sends passwords with embedded zeros.
+	#  i.e. the debug output will show
+	#
+	#	User-Password = "password\000\000"
+	#
+	#  This policy will fix it to just be "password".
+	#
+#	filter_password
+
+	#
+	#  The preprocess module takes care of sanitizing some bizarre
+	#  attributes in the request, and turning them into attributes
+	#  which are more standard.
+	#
+	#  It takes care of processing the 'raddb/mods-config/preprocess/hints' 
+	#  and the 'raddb/mods-config/preprocess/huntgroups' files.
+	preprocess
+
+	#  If you intend to use CUI and you require that the Operator-Name
+	#  be set for CUI generation and you want to generate CUI also
+	#  for your local clients then uncomment the operator-name
+	#  below and set the operator-name for your clients in clients.conf
+#	operator-name
+
+	#
+	#  If you want to generate CUI for some clients that do not
+	#  send proper CUI requests, then uncomment the
+	#  cui below and set "add_cui = yes" for these clients in clients.conf
+#	cui
+
+	#
+	#  If you want to have a log of authentication requests,
+	#  un-comment the following line.
+#	auth_log
+
+	#
+	#  The chap module will set 'Auth-Type := CHAP' if we are
+	#  handling a CHAP request and Auth-Type has not already been set
+	chap
+
+	#
+	#  If the users are logging in with an MS-CHAP-Challenge
+	#  attribute for authentication, the mschap module will find
+	#  the MS-CHAP-Challenge attribute, and add 'Auth-Type := MS-CHAP'
+	#  to the request, which will cause the server to then use
+	#  the mschap module for authentication.
+	mschap
+
+	#
+	#  If you have a Cisco SIP server authenticating against
+	#  FreeRADIUS, uncomment the following line, and the 'digest'
+	#  line in the 'authenticate' section.
+	digest
+
+	#
+	#  The dpsk module implements dynamic PSK.
+	#
+	#  If the request contains FreeRADIUS-802.1X-Anonce
+	#  and FreeRADIUS-802.1X-EAPoL-Key-Msg, then it will set
+	#  	&control:Auth-Type := dpsk
+	#
+	#  The "rewrite_called_station_id" policy creates the
+	#  Called-Station-MAC attribute, which is needed by
+	#  the dpsk module.
+	#
+#	rewrite_called_station_id
+#	dpsk
+
+	#
+	#  The WiMAX specification says that the Calling-Station-Id
+	#  is 6 octets of the MAC.  This definition conflicts with
+	#  RFC 3580, and all common RADIUS practices.  If you are using
+	#  old style WiMAX (non LTE) the un-commenting the "wimax" module
+	#  here means that it will fix the Calling-Station-Id attribute to
+	#  the normal format as specified in RFC 3580 Section 3.21.
+	#
+	#  If you are using WiMAX 2.1 (LTE) then un-commenting will allow 
+	#  the module to handle SQN resyncronisation. Prior to calling the
+	#  module it is necessary to populate the following attributes
+	#  with the relevant keys:
+	#    control:WiMAX-SIM-Ki
+	#    control:WiMAX-SIM-OPc
+	#
+	#  If WiMAX-Re-synchronization-Info is found in the request then
+	#  the module will attempt to extract SQN and store it in
+	#  control:WiMAX-SIM-SQN. Also a copy of RAND is extracted to
+	#  control:WiMAX-SIM-RAND.
+	#
+	#  If the SIM cannot be authenticated using Ki and OPc then reject
+	#  will be returned.
+#	wimax
+
+	#
+	#  Look for IPASS style 'realm/', and if not found, look for
+	#  '@realm', and decide whether or not to proxy, based on
+	#  that.
+#	IPASS
+
+	#
+	# Look for realms in user@domain format
+	suffix
+#	ntdomain
+
+	#
+	#  This module takes care of EAP-MD5, EAP-TLS, and EAP-LEAP
+	#  authentication.
+	#
+	#  It also sets the EAP-Type attribute in the request
+	#  attribute list to the EAP type from the packet.
+	#
+	#  The EAP module returns "ok" or "updated" if it is not yet ready
+	#  to authenticate the user.  The configuration below checks for
+	#  "ok", and stops processing the "authorize" section if so.
+	#
+	#  Any LDAP and/or SQL servers will not be queried for the
+	#  initial set of packets that go back and forth to set up
+	#  TTLS or PEAP.
+	#
+	#  The "updated" check is commented out for compatibility with
+	#  previous versions of this configuration, but you may wish to
+	#  uncomment it as well; this will further reduce the number of
+	#  LDAP and/or SQL queries for TTLS or PEAP.
+	#
+	eap {
+		ok = return
+#		updated = return
+	}
+
+	#
+	#  Pull crypt'd passwords from /etc/passwd or /etc/shadow,
+	#  using the system API's to get the password.  If you want
+	#  to read /etc/passwd or /etc/shadow directly, see the
+	#  mods-available/passwd module.
+	#
+#	unix
+
+	#
+	#  Read the 'users' file.  In v3, this is located in
+	#  raddb/mods-config/files/authorize
+	files
+
+	#
+	#  Look in an SQL database.  The schema of the database
+	#  is meant to mirror the "users" file.
+	#
+	#  See "Authorization Queries" in mods-available/sql
+# pap
+	
+# pap
+
+	#
+	#  If you are using /etc/smbpasswd, and are also doing
+	#  mschap authentication, the un-comment this line, and
+	#  configure the 'smbpasswd' module.
+#	smbpasswd
+
+	#
+	#  The ldap module reads passwords from the LDAP database.
+	-ldap
+# pap
+	#
+	#  If you're using Active Directory and PAP, then uncomment
+	#  the following lines, and the "Auth-Type LDAP" section below.
+	#
+	#  This will let you do PAP authentication to AD.
+	#
+        
+
+# Si encuentra el usuario en SQL, acepta aunque no haya password
+if (ok || updated) {
+    update control {
+        Auth-Type := Accept
+    }
+}
+
+ # Si encuentra el usuario en SQL, acepta sin validar password
+
+
+	#
+	#  Enforce daily limits on time spent logged in.
+#	daily
+
+	#
+	expiration
+	logintime
+
+	#
+	#  If no other module has claimed responsibility for
+	#  authentication, then try to use PAP.  This allows the
+	#  other modules listed above to add a "known good" password
+	#  to the request, and to do nothing else.  The PAP module
+	#  will then see that password, and use it to do PAP
+	#  authentication.
+	#
+	#  This module should be listed last, so that the other modules
+	#  get a chance to set Auth-Type for themselves.
+	#
+# pap
+
+	#
+	#  If "status_server = yes", then Status-Server messages are passed
+	#  through the following section, and ONLY the following section.
+	#  This permits you to do DB queries, for example.  If the modules
+	#  listed here return "fail", then NO response is sent.
+	#
+#	Autz-Type Status-Server {
+#
+#	}
+
+	#
+	#  RADIUS/TLS (or RadSec) connections are processed through
+	#  this section.  See sites-available/tls, and the configuration
+	#  item "check_client_connections" for more information.
+	#
+	#  The request contains TLS client certificate attributes,
+	#  and nothing else.  The debug output will print which
+	#  attributes are available on your system.
+	#
+	#  If the section returns "ok" or "updated", then the
+	#  connection is accepted.  Otherwise the connection is
+	#  terminated.
+	#
+	Autz-Type New-TLS-Connection {
+		  ok
+	}
+}
+
+
+#  Authentication.
+#
+#
+#  This section lists which modules are available for authentication.
+#  Note that it does NOT mean 'try each module in order'.  It means
+#  that a module from the 'authorize' section adds a configuration
+#  attribute 'Auth-Type := FOO'.  That authentication type is then
+#  used to pick the appropriate module from the list below.
+#
+
+#  In general, you SHOULD NOT set the Auth-Type attribute.  The server
+#  will figure it out on its own, and will do the right thing.  The
+#  most common side effect of erroneously setting the Auth-Type
+#  attribute is that one authentication method will work, but the
+#  others will not.
+#
+#  The common reasons to set the Auth-Type attribute by hand
+#  is to either forcibly reject the user (Auth-Type := Reject),
+#  or to or forcibly accept the user (Auth-Type := Accept).
+#
+#  Note that Auth-Type := Accept will NOT work with EAP.
+#
+#  Please do not put "unlang" configurations into the "authenticate"
+#  section.  Put them in the "post-auth" section instead.  That's what
+#  the post-auth section is for.
+#
+authenticate {
+	#
+	#  PAP authentication, when a back-end database listed
+	#  in the 'authorize' section supplies a password.  The
+	#  password can be clear-text, or encrypted.
+        pap
+
+#	dpsk
+
+	#
+	#  Most people want CHAP authentication
+	#  A back-end database listed in the 'authorize' section
+	#  MUST supply a CLEAR TEXT password.  Encrypted passwords
+	#  won't work.
+	Auth-Type CHAP {
+		chap
+	}
+
+	#
+	#  MSCHAP authentication.
+	Auth-Type MS-CHAP {
+		mschap
+	}
+
+	#
+	#  For old names, too.
+	#
+	mschap
+
+	#
+	#  If you have a Cisco SIP server authenticating against
+	#  FreeRADIUS, uncomment the following line, and the 'digest'
+	#  line in the 'authorize' section.
+	digest
+
+	#
+	#  Pluggable Authentication Modules.
+#	pam
+
+	#  Uncomment it if you want to use ldap for authentication
+	#
+	#  Note that this means "check plain-text password against
+	#  the ldap database", which means that EAP won't work,
+	#  as it does not supply a plain-text password.
+	#
+	#  We do NOT recommend using this.  LDAP servers are databases.
+	#  They are NOT authentication servers.  FreeRADIUS is an
+	#  authentication server, and knows what to do with authentication.
+	#  LDAP servers do not.
+	#
+	#  However, it is necessary for Active Directory, because
+	#  Active Directory won't give the passwords to FreeRADIUS.
+	#
+#	Auth-Type LDAP {
+#		ldap
+#	}
+
+	#
+	#  Allow EAP authentication.
+	eap
+
+	#
+	#  The older configurations sent a number of attributes in
+	#  Access-Challenge packets, which wasn't strictly correct.
+	#  If you want to filter out these attributes, uncomment
+	#  the following lines.
+	#
+#	Auth-Type eap {
+#		eap {
+#			handled = 1
+#		}
+#		if (handled && (Response-Packet-Type == Access-Challenge)) {
+#			attr_filter.access_challenge.post-auth
+#			handled  # override the "updated" code from attr_filter
+#		}
+#	}
+}
+
+
+#
+#  Pre-accounting.  Decide which accounting type to use.
+#
+preacct {
+	preprocess
+
+	#
+	#  Merge Acct-[Input|Output]-Gigawords and Acct-[Input-Output]-Octets
+	#  into a single 64bit counter Acct-[Input|Output]-Octets64.
+	#
+#	acct_counters64
+
+	#
+	#  Session start times are *implied* in RADIUS.
+	#  The NAS never sends a "start time".  Instead, it sends
+	#  a start packet, *possibly* with an Acct-Delay-Time.
+	#  The server is supposed to conclude that the start time
+	#  was "Acct-Delay-Time" seconds in the past.
+	#
+	#  The code below creates an explicit start time, which can
+	#  then be used in other modules.  It will be *mostly* correct.
+	#  Any errors are due to the 1-second resolution of RADIUS,
+	#  and the possibility that the time on the NAS may be off.
+	#
+	#  The start time is: NOW - delay - session_length
+	#
+
+#	update request {
+#	  	&FreeRADIUS-Acct-Session-Start-Time = "%{expr: %l - %{%{Acct-Session-Time}:-0} - %{%{Acct-Delay-Time}:-0}}"
+#	}
+
+
+	#
+	#  Ensure that we have a semi-unique identifier for every
+	#  request, and many NAS boxes are broken.
+	acct_unique
+
+	#
+	#  Look for IPASS-style 'realm/', and if not found, look for
+	#  '@realm', and decide whether or not to proxy, based on
+	#  that.
+	#
+	#  Accounting requests are generally proxied to the same
+	#  home server as authentication requests.
+#	IPASS
+	suffix
+#	ntdomain
+
+	#
+	#  Read the 'acct_users' file
+	files
+}
+
+#
+#  Accounting.  Log the accounting data.
+#
+accounting {
+	#  Update accounting packet by adding the CUI attribute
+	#  recorded from the corresponding Access-Accept
+	#  use it only if your NAS boxes do not support CUI themselves
+#	cui
+	#
+	#  Create a 'detail'ed log of the packets.
+	#  Note that accounting requests which are proxied
+	#  are also logged in the detail file.
+	detail
+#	daily
+
+	#  Update the wtmp file
+	#
+	#  If you don't use "radlast", you can delete this line.
+	unix
+
+	#
+	#  For Simultaneous-Use tracking.
+	#
+	#  Due to packet losses in the network, the data here
+	#  may be incorrect.  There is little we can do about it.
+#	radutmp
+#	sradutmp
+
+	#
+	#  Return an address to the IP Pool when we see a stop record.
+	#
+	#  Ensure that &control:Pool-Name is set to determine which
+	#  pool of IPs are used.
+# sqlippool
+# pap
+
+	#
+	#  Log traffic to an SQL database.
+	#
+	#  See "Accounting queries" in mods-available/sql
+# pap
+	sql
+# pap
+
+	#
+	#  If you receive stop packets with zero session length,
+	#  they will NOT be logged in the database.  The SQL module
+	#  will print a message (only in debugging mode), and will
+	#  return "noop".
+	#
+	#  You can ignore these packets by uncommenting the following
+	#  three lines.  Otherwise, the server will not respond to the
+	#  accounting request, and the NAS will retransmit.
+	#
+#	if (noop) {
+#		ok
+#	}
+
+	#  Cisco VoIP specific bulk accounting
+#	pgsql-voip
+# pap
+
+	# For Exec-Program and Exec-Program-Wait
+	exec
+
+	#  Filter attributes from the accounting response.
+	attr_filter.accounting_response
+
+	#
+	#  See "Autz-Type Status-Server" for how this works.
+	#
+#	Acct-Type Status-Server {
+#
+#	}
+}
+
+
+#  Session database, used for checking Simultaneous-Use. Either the radutmp
+#  or rlm_sql module can handle this.
+# pap
+#  The rlm_sql module is *much* faster
+# pap
+session {
+#	radutmp
+
+	#
+	#  See "Simultaneous Use Checking Queries" in mods-available/sql
+# pap
+sql
+# pap
+}
+
+
+#  Post-Authentication
+#  Once we KNOW that the user has been authenticated, there are
+#  additional steps we can take.
+post-auth {
+	#
+	#  If you need to have a State attribute, you can
+	#  add it here.  e.g. for later CoA-Request with
+	#  State, and Service-Type = Authorize-Only.
+	#
+#	if (!&reply:State) {
+#		update reply {
+#			State := "0x%{randstr:16h}"
+#		}
+#	}
+
+	#
+	#  Reject packets where User-Name != TLS-Client-Cert-Common-Name
+	#  There is no reason for users to lie about their names.
+	#
+	#  In general, User-Name == EAP Identity == TLS-Client-Cert-Common-Name
+	#
+#	verify_tls_client_common_name
+
+	#
+	#  If there is no Stripped-User-Name in the request, AND we have a client cert,
+	#  then create a Stripped-User-Name from the TLS client certificate information.
+	#
+	#  Note that this policy MUST be edited for your local system!
+	#  We do not know which fields exist in which certificate, as
+	#  there is no standard here.  There is no way for us to have
+	#  a default configuration which "just works" everywhere.  We
+	#  can only make recommendations.
+	#
+	#  The Stripped-User-Name is updated so that it is logged in
+	#  the various "username" fields.  This logging means that you
+	#  can associate a particular session with a particular client
+	#  certificate.
+	#
+#	if (&EAP-Message && !&Stripped-User-Name && &TLS-Client-Cert-Serial) {
+#		update request {
+#			&Stripped-User-Name := "%{%{TLS-Client-Cert-Subject-Alt-Name-Email}:-%{%{TLS-Client-Cert-Common-Name}:-%{TLS-Client-Cert-Serial}}}"
+#		}
+#
+		#
+		#  Create a Class attribute which is a hash of a bunch
+		#  of information which we hope exists.  This
+		#  attribute should be echoed back in
+		#  Accounting-Request packets, which will let the
+		#  administrator correlate authentication and
+		#  accounting.
+		#
+#		update reply {
+#			Class += "%{md5:%{Calling-Station-Id}%{Called-Station-Id}%{TLS-Client-Cert-Subject-Alt-Name-Email}%{TLS-Client-Cert-Common-Name}%{TLS-Client-Cert-Serial}%{NAS-IPv6-Address}%{NAS-IP-Address}%{NAS-Identifier}%{NAS-Port}"
+#		}
+#
+#	}
+
+	#
+	#  For EAP-TTLS and PEAP, add the cached attributes to the reply.
+	#  The "session-state" attributes are automatically cached when
+	#  an Access-Challenge is sent, and automatically retrieved
+	#  when an Access-Request is received.
+	#
+	#  The session-state attributes are automatically deleted after
+	#  an Access-Reject or Access-Accept is sent.
+	#
+	#  If both session-state and reply contain a User-Name attribute, remove
+	#  the one in the reply if it is just a copy of the one in the request, so
+	#  we don't end up with two User-Name attributes.
+
+	if (session-state:User-Name && reply:User-Name && request:User-Name && (reply:User-Name == request:User-Name)) {
+		update reply {
+			&User-Name !* ANY
+		}
+	}
+	update {
+		&reply: += &session-state:
+	}
+
+	#
+	#  Refresh leases when we see a start or alive. Return an address to
+	#  the IP Pool when we see a stop record.
+	#
+	#  Ensure that &control:Pool-Name is set to determine which
+	#  pool of IPs are used.
+# sqlippool
+# pap
+
+
+	#  Create the CUI value and add the attribute to Access-Accept.
+	#  Uncomment the line below if *returning* the CUI.
+#	cui
+
+	#  Create empty accounting session to make simultaneous check
+	#  more robust. See the accounting queries configuration in
+	#  raddb/mods-config/sql/main/*/queries.conf for details.
+# pap
+	#
+	#  The "sql_session_start" policy is defined in
+# pap
+	#  raddb/policy.d/accounting.  See that file for more details.
+sql_session_start
+# pap
+
+	#
+	#  If you want to have a log of authentication replies,
+	#  un-comment the following line, and enable the
+	#  'detail reply_log' module.
+#	reply_log
+
+	#
+	#  After authenticating the user, do another SQL query.
+	#  See "Authentication Logging Queries" in mods-available/sql
+# pap
+	sql
+# pap
+
+	#
+	#  Un-comment the following if you want to modify the user's object
+	#  in LDAP after a successful login.
+	#
+#	ldap
+
+	# For Exec-Program and Exec-Program-Wait
+	exec
+
+	#
+	#  In order to calcualate the various keys for old style WiMAX
+	#  (non LTE) you will need to define the WiMAX NAI, usually via
+	#
+	#	update request {
+	#	       &WiMAX-MN-NAI = "%{User-Name}"
+	#	}
+	#
+	#  If you want various keys to be calculated, you will need to
+	#  update the reply with "template" values.  The module will see
+	#  this, and replace the template values with the correct ones
+	#  taken from the cryptographic calculations.  e.g.
+	#
+	# 	update reply {
+	#		&WiMAX-FA-RK-Key = 0x00
+	#		&WiMAX-MSK = "%{reply:EAP-MSK}"
+	#	}
+	#
+	#  You may want to delete the MS-MPPE-*-Keys from the reply,
+	#  as some WiMAX clients behave badly when those attributes
+	#  are included.  See "raddb/modules/wimax", configuration
+	#  entry "delete_mppe_keys" for more information.
+	#
+	#  For LTE style WiMAX you need to populate the following with the
+	#  relevant values:
+	#    control:WiMAX-SIM-Ki
+	#    control:WiMAX-SIM-OPc
+	#    control:WiMAX-SIM-AMF
+	#    control:WiMAX-SIM-SQN
+	#
+#	wimax
+
+	#  If there is a client certificate (EAP-TLS, sometimes PEAP
+	#  and TTLS), then some attributes are filled out after the
+	#  certificate verification has been performed.  These fields
+	#  MAY be available during the authentication, or they may be
+	#  available only in the "post-auth" section.
+	#
+	#  The first set of attributes contains information about the
+	#  issuing certificate which is being used.  The second
+	#  contains information about the client certificate (if
+	#  available).
+#
+#	update reply {
+#	       Reply-Message += "%{TLS-Cert-Serial}"
+#	       Reply-Message += "%{TLS-Cert-Expiration}"
+#	       Reply-Message += "%{TLS-Cert-Subject}"
+#	       Reply-Message += "%{TLS-Cert-Issuer}"
+#	       Reply-Message += "%{TLS-Cert-Common-Name}"
+#	       Reply-Message += "%{TLS-Cert-Subject-Alt-Name-Email}"
+#
+#	       Reply-Message += "%{TLS-Client-Cert-Serial}"
+#	       Reply-Message += "%{TLS-Client-Cert-Expiration}"
+#	       Reply-Message += "%{TLS-Client-Cert-Subject}"
+#	       Reply-Message += "%{TLS-Client-Cert-Issuer}"
+#	       Reply-Message += "%{TLS-Client-Cert-Common-Name}"
+#	       Reply-Message += "%{TLS-Client-Cert-Subject-Alt-Name-Email}"
+#	}
+
+	#  Insert class attribute (with unique value) into response,
+	#  aids matching auth and acct records, and protects against duplicate
+	#  Acct-Session-Id. Note: Only works if the NAS has implemented
+	#  RFC 2865 behaviour for the class attribute, AND if the NAS
+	#  supports long Class attributes.  Many older or cheap NASes
+	#  only support 16-octet Class attributes.
+#	insert_acct_class
+
+	#  MacSEC requires the use of EAP-Key-Name.  However, we don't
+	#  want to send it for all EAP sessions.  Therefore, the EAP
+	#  modules put required data into the EAP-Session-Id attribute.
+	#  This attribute is never put into a request or reply packet.
+	#
+	#  Uncomment the next few lines to copy the required data into
+	#  the EAP-Key-Name attribute
+#	if (&reply:EAP-Session-Id) {
+#		update reply {
+#			EAP-Key-Name := &reply:EAP-Session-Id
+#		}
+#	}
+
+	#  Remove reply message if the response contains an EAP-Message
+	remove_reply_message_if_eap
+
+	#
+	#  Access-Reject packets are sent through the REJECT sub-section of the
+	#  post-auth section.
+	#
+	#  Add the ldap module name (or instance) if you have set
+	#  'edir = yes' in the ldap module configuration
+	#
+	#  The "session-state" attributes are not available here.
+	#
+	Post-Auth-Type REJECT {
+		# log failed authentications in SQL, too.
+		-sql
+# pap
+		attr_filter.access_reject
+
+		# Insert EAP-Failure message if the request was
+		# rejected by policy instead of because of an
+		# authentication failure
+		eap
+
+		#  Remove reply message if the response contains an EAP-Message
+		remove_reply_message_if_eap
+	}
+
+	#
+	#  Filter access challenges.
+	#
+	Post-Auth-Type Challenge {
+#		remove_reply_message_if_eap
+#		attr_filter.access_challenge.post-auth
+	}
+
+	#
+	#  The Client-Lost section will be run for a request when
+	#  FreeRADIUS has given up waiting for an end-users client to
+	#  respond. This is most useful for logging EAP sessions where
+	#  the client stopped responding (likely because the
+	#  certificate was not acceptable.)  i.e. this is not for
+	#  RADIUS clients, but for end-user systems.
+	#
+	#  This will only be triggered by new packets arriving,
+	#  and will be run at some point in the future *after* the
+	#  original request has been discarded.
+	#
+	#  Therefore the *ONLY* attributes that are available here
+	#  are those in the session-state list. If you want data
+	#  to log, make sure it is copied to &session-state:
+	#  before the client stops responding. NONE of the other
+	#  original attributes (request, reply, etc) will be
+	#  available.
+	#
+	#  This section will only be run if `postauth_client_lost`
+	#  is enabled in the main configuration in `radiusd.conf`.
+	#
+	#  Note that there are MANY reasons why an end users system
+	#  might not respond:
+	#
+	#    * it could not get the packet due to firewall issues
+	#    * it could not get the packet due to a lossy network
+	#    * the users system might not like the servers cert
+	#    * the users system might not like something else...
+	#
+	#  In some cases, the client is helpful enough to send us a
+	#  TLS Alert message, saying what it doesn't like about the
+	#  certificate.  In other cases, no such message is available.
+	#
+	#  All that we can know on the FreeRADIUS side is that we sent
+	#  an Access-Challenge, and the client never sent anything
+	#  else.  The reasons WHY this happens are buried inside of
+	#  the logs on the client system.  No amount of looking at the
+	#  FreeRADIUS logs, or poking the FreeRADIUS configuration
+	#  will tell you why the client gave up.  The answers are in
+	#  the logs on the client side.  And no, the FreeRADIUS team
+	#  didn't write the client, so we don't know where those logs
+	#  are, or how to get at them.
+	#
+	#  Information about the TLS state changes is in the
+	#  &session-state:TLS-Session-Information attribute.
+	#
+	Post-Auth-Type Client-Lost {
+		#
+		#  Debug ALL of the TLS state changes done during the
+		#  EAP negotiation.
+		#
+#		%{debug_attr:&session-state:TLS-Session-Information[*]}
+
+		#
+		#  Debug the LAST TLS state change done during the EAP
+		#  negotiation.  For errors, this is usually a TLS
+		#  alert from the client saying something like
+		#  "unknown CA".
+		#
+#		%{debug_attr:&session-state:TLS-Session-Information[n]}
+
+		#
+		#  Debug the last module failure message.  This may be
+		#  useful, or it may refer to a server-side failure
+		#  which did not cause the client to stop talking to the server.
+		#
+#		%{debug_attr:&session-state:Module-Failure-Message}
+	}
+
+	#
+	#  If the client sends EAP-Key-Name in the request,
+	#  then echo the real value back in the reply.
+	#
+	if (EAP-Key-Name && &reply:EAP-Session-Id) {
+		update reply {
+			&EAP-Key-Name := &reply:EAP-Session-Id
+		}
+	}
+}
+
+#
+#  When the server decides to proxy a request to a home server,
+#  the proxied request is first passed through the pre-proxy
+#  stage.  This stage can re-write the request, or decide to
+#  cancel the proxy.
+#
+#  Only a few modules currently have this method.
+#
+pre-proxy {
+	# Before proxing the request add an Operator-Name attribute identifying
+	# if the operator-name is found for this client.
+	# No need to uncomment this if you have already enabled this in
+	# the authorize section.
+#	operator-name
+
+	#  The client requests the CUI by sending a CUI attribute
+	#  containing one zero byte.
+	#  Uncomment the line below if *requesting* the CUI.
+#	cui
+
+	#  Uncomment the following line if you want to change attributes
+	#  as defined in the preproxy_users file.
+#	files
+
+	#  Uncomment the following line if you want to filter requests
+	#  sent to remote servers based on the rules defined in the
+	#  'attrs.pre-proxy' file.
+#	attr_filter.pre-proxy
+
+	#  If you want to have a log of packets proxied to a home
+	#  server, un-comment the following line, and the
+	#  'detail pre_proxy_log' section, above.
+#	pre_proxy_log
+}
+
+#
+#  When the server receives a reply to a request it proxied
+#  to a home server, the request may be massaged here, in the
+#  post-proxy stage.
+#
+post-proxy {
+
+	#  If you want to have a log of replies from a home server,
+	#  un-comment the following line, and the 'detail post_proxy_log'
+	#  section, above.
+#	post_proxy_log
+
+	#  Uncomment the following line if you want to filter replies from
+	#  remote proxies based on the rules defined in the 'attrs' file.
+#	attr_filter.post-proxy
+
+	#
+	#  If you are proxying LEAP, you MUST configure the EAP
+	#  module, and you MUST list it here, in the post-proxy
+	#  stage.
+	#
+	#  You MUST also use the 'nostrip' option in the 'realm'
+	#  configuration.  Otherwise, the User-Name attribute
+	#  in the proxied request will not match the user name
+	#  hidden inside of the EAP packet, and the end server will
+	#  reject the EAP request.
+	#
+	eap
+
+	#
+	#  If the server tries to proxy a request and fails, then the
+	#  request is processed through the modules in this section.
+	#
+	#  The main use of this section is to permit robust proxying
+	#  of accounting packets.  The server can be configured to
+	#  proxy accounting packets as part of normal processing.
+	#  Then, if the home server goes down, accounting packets can
+	#  be logged to a local "detail" file, for processing with
+	#  radrelay.  When the home server comes back up, radrelay
+	#  will read the detail file, and send the packets to the
+	#  home server.
+	#
+	#  See the "mods-available/detail.example.com" file for more
+	#  details on writing a detail file specifically for one
+	#  destination.
+	#
+	#  See the "sites-available/robust-proxy-accounting" virtual
+	#  server for more details on reading this "detail" file.
+	#
+	#  With this configuration, the server always responds to
+	#  Accounting-Requests from the NAS, but only writes
+	#  accounting packets to disk if the home server is down.
+	#
+#	Post-Proxy-Type Fail-Accounting {
+#		detail.example.com
+
+		#
+		#  Ensure a response is sent to the NAS now that the
+		#  packet has been written to a detail file.
+		#
+#		acct_response
+#	}
+}
+}
+
+=== /etc/freeradius/3.0/clients.conf ===
+# -*- text -*-
+##
+## clients.conf -- client configuration directives
+##
+##	$Id: 5f39ff120a44e3fb837d1893d54a7ebb31fd8749 $
+
+#######################################################################
+#
+#  Define RADIUS clients (usually a NAS, Access Point, etc.).
+
+#
+#  There are a number of security practices which are critical in the
+#  modern era.
+#
+#  * don't use RADIUS/UDP or RADIUS/TCP over the Internet.  Use RADIUS/TLS.
+#
+#  * If you do send RADIUS over UDP or TCP, don't send MS-CHAPv2.
+#    Anyone who can see the MS-CHAPv2 data can crack it in milliseconds.
+#
+#  * use the "radsecret" program to generate secrets.  It uses Perl (sorry).
+#    Every time you run it, it will generate a new strong secret.
+#
+#  * don't create shared secrets yourself.  Anything you create is likely to
+#    be in a "cracking" dictionary, and will allow a hobbyist attacker
+#    to crack the shared secret in a few minutes.
+#
+#  * Don't trust anyone who tells you to ignore the above recommendations.
+#
+
+#
+#  Defines a RADIUS client.
+#
+#  '127.0.0.1' is another name for 'localhost'.  It is enabled by default,
+#  to allow testing of the server after an initial installation.  If you
+#  are not going to be permitting RADIUS queries from localhost, we suggest
+#  that you delete, or comment out, this entry.
+#
+#
+
+#
+#  Each client has a "short name" that is used to distinguish it from
+#  other clients.
+#
+#  In version 1.x, the string after the word "client" was the IP
+#  address of the client.  In 2.0, the IP address is configured via
+#  the "ipaddr" or "ipv6addr" fields.  For compatibility, the 1.x
+#  format is still accepted.
+#
+client localhost {
+	#  Only *one* of ipaddr, ipv4addr, ipv6addr may be specified for
+	#  a client.
+	#
+	#  ipaddr will accept IPv4 or IPv6 addresses with optional CIDR
+	#  notation '/<mask>' to specify ranges.
+	#
+	#  ipaddr will accept domain names e.g. example.org resolving
+	#  them via DNS.
+	#
+	#  If both A and AAAA records are found, A records will be
+	#  used in preference to AAAA.
+	ipaddr = 127.0.0.1
+
+	#  Same as ipaddr but allows v4 addresses only. Requires A
+	#  record for domain names.
+#	ipv4addr = *	# any.  127.0.0.1 == localhost
+
+	#  Same as ipaddr but allows v6 addresses only. Requires AAAA
+	#  record for domain names.
+#	ipv6addr = ::	# any.  ::1 == localhost
+
+	#
+	#  A note on DNS:  We STRONGLY recommend using IP addresses
+	#  rather than host names.  Using host names means that the
+	#  server will do DNS lookups when it starts, making it
+	#  dependent on DNS.  i.e. If anything goes wrong with DNS,
+	#  the server won't start!
+	#
+	#  The server also looks up the IP address from DNS once, and
+	#  only once, when it starts.  If the DNS record is later
+	#  updated, the server WILL NOT see that update.
+	#
+
+	#
+	#  The transport protocol.
+	#
+	#  If unspecified, defaults to "udp", which is the traditional
+	#  RADIUS transport.  It may also be "tcp", in which case the
+	#  server will accept connections from this client ONLY over TCP.
+	#
+	proto = *
+
+	#
+	#  The shared secret use to "encrypt" and "sign" packets between
+	#  the NAS and FreeRADIUS.  You MUST change this secret from the
+	#  default, otherwise it's not a secret any more!
+	#
+	#  The secret can be any string, up to 8k characters in length.
+	#
+	#  Control codes can be entered vi octal encoding,
+	#	e.g. "\101\102" == "AB"
+	#  Quotation marks can be entered by escaping them,
+	#	e.g. "foo\"bar"
+	#
+	#  A note on security: The security of the RADIUS protocol
+	#  depends COMPLETELY on this secret!  We recommend using a
+	#  shared secret that at LEAST 16 characters long.  It should
+	#  preferably be 32 characters in length.  The secret MUST be
+	#  random, and should not be words, phrase, or anything else
+	#  that is recognisable.
+	#
+	#  Computing power has increased enormously since RADIUS was
+	#  first defined.  A hobbyist with a high-end GPU can try ALL
+	#  of the 8-character shared secrets in about a day.  The
+	#  security of shared secrets increases MUCH more with the
+	#  length of the shared secret, than with number of different
+	#  characters used in it.  So don't bother trying to use
+	#  "special characters" or anything else in an attempt to get
+	#  un-guessable secrets.  Instead, just get data from a secure
+	#  random number generator, and use that.
+	#
+	#  You should create shared secrets using a method like this:
+	#
+	#	dd if=/dev/random bs=1 count=24 | base64
+	#
+	#  This process will give output which takes 24 random bytes,
+	#  and converts them to 32 characters of ASCII.  The output
+	#  should be accepted by all RADIUS clients.
+	#
+	#  You should NOT create shared secrets by hand.  They will
+	#  not be random.  They will will be trivial to crack.
+	#
+	#  The default secret below is only for testing, and should
+	#  not be used in any real environment.
+	#
+        secret = testing123
+	require_message_authenticator = yes
+
+	#
+	#  The global configuration "security.require_message_authenticator"
+	#  flag sets the default for all clients.  That default can be
+	#  over-ridden here, by setting it to a value.  If no value is set,
+	#  then the default from the "radiusd.conf" file is used.
+	#
+	#  See that file for full documentation on the flag, along
+	#  with allowed values and meanings.
+	#
+	#  This flag exists solely for legacy clients which do not send
+	#  Message-Authenticator in all Access-Request packets.  We do not
+	#  recommend setting it to "no".
+	#
+	#  The number one way to protect yourself from the BlastRADIUS
+	#  attack is to update all RADIUS servers, and then set this
+	#  flag to "yes".  If all RADIUS servers are updated, and if
+	#  all of them have this flag set to "yes" for all clients,
+	#  then your network is safe.  You can then upgrade the
+	#  clients when it is convenient, instead of rushing the
+	#  upgrades.
+	#
+	#  allowed values: yes, no, auto
+	
+
+	#
+	#  The global configuration "security.limit_proxy_state"
+	#  flag sets the default for all clients.  That default can be
+	#  over-ridden here, by setting it to "no".
+	#
+	#  See that file for full documentation on the flag, along
+	#  with allowed values,and meanings.
+	#
+	#  This flag exists solely for legacy clients which do not send
+	#  Message-Authenticator in all Access-Request packets.  We do not
+	#  recommend setting it to "no".
+	#
+	#  allowed values: yes, no, auto
+	#
+#	limit_proxy_state = yes
+
+	#
+	#  The short name is used as an alias for the fully qualified
+	#  domain name, or the IP address.
+	#
+	#  It is accepted for compatibility with 1.x, but it is no
+	#  longer necessary in >= 2.0
+	#
+#	shortname = localhost
+
+	#
+	# the following three fields are optional, but may be used by
+	# checkrad.pl for simultaneous use checks
+	#
+
+	#
+	# The nas_type tells 'checkrad.pl' which NAS-specific method to
+	#  use to query the NAS for simultaneous use.
+	#
+	#  Permitted NAS types are:
+	#
+	#	cisco
+	#	computone
+	#	livingston
+	#	juniper
+	#	max40xx
+	#	multitech
+	#	netserver
+	#	pathras
+	#	patton
+	#	portslave
+	#	tc
+	#	usrhiper
+	#	other		# for all other types
+
+	#
+	nas_type	 = other	# localhost isn't usually a NAS...
+
+	#
+	#  The following two configurations are for future use.
+	#  The 'naspasswd' file is currently used to store the NAS
+	#  login name and password, which is used by checkrad.pl
+	#  when querying the NAS for simultaneous use.
+	#
+#	login	   = !root
+#	password	= someadminpas
+
+	#
+	#  As of 2.0, clients can also be tied to a virtual server.
+	#  This is done by setting the "virtual_server" configuration
+	#  item, as in the example below.
+	#
+#	virtual_server = home1
+
+	#
+	#  A pointer to the "home_server_pool" OR a "home_server"
+	#  section that contains the CoA configuration for this
+	#  client.  For an example of a coa home server or pool,
+	#  see raddb/sites-available/originate-coa
+#	coa_server = coa
+
+	#
+	#  Response window for proxied packets.  If non-zero,
+	#  then the lower of (home, client) response_window
+	#  will be used.
+	#
+	#  i.e. it can be used to lower the response_window
+	#  packets from one client to a home server.  It cannot
+	#  be used to raise the response_window.
+	#
+#	response_window = 10.0
+
+	#
+	#  Connection limiting for clients using "proto = tcp".
+	#
+	#  This section is ignored for clients sending UDP traffic
+	#
+	limit {
+		#
+		#  Limit the number of simultaneous TCP connections from a client
+		#
+		#  The default is 16.
+		#  Setting this to 0 means "no limit"
+		max_connections = 16
+
+		#  The per-socket "max_requests" option does not exist.
+
+		#
+		#  The lifetime, in seconds, of a TCP connection.  After
+		#  this lifetime, the connection will be closed.
+		#
+		#  Setting this to 0 means "forever".
+		lifetime = 0
+
+		#
+		#  The idle timeout, in seconds, of a TCP connection.
+		#  If no packets have been received over the connection for
+		#  this time, the connection will be closed.
+		#
+		#  Setting this to 0 means "no timeout".
+		#
+		#  We STRONGLY RECOMMEND that you set an idle timeout.
+		#
+		idle_timeout = 30
+	}
+}
+
+# IPv6 Client
+client localhost_ipv6 {
+	ipv6addr	= ::1
+	secret		= testing123
+}
+
+# All IPv6 Site-local clients
+#client sitelocal_ipv6 {
+#	ipv6addr	= fe80::/16
+#	secret		= testing123
+#}
+
+#client example.org {
+#	ipaddr		= radius.example.org
+#	secret		= testing123
+#}
+
+#
+#  You can now specify one secret for a network of clients.
+#  When a client request comes in, the BEST match is chosen.
+#  i.e. The entry from the smallest possible network.
+#
+#client private-network-1 {
+#	ipaddr		= 192.0.2.0/24
+#	secret		= testing123-1
+#}
+
+#client private-network-2 {
+#	ipaddr		= 198.51.100.0/24
+#	secret		= testing123-2
+#}
+
+#######################################################################
+#
+#  Per-socket client lists.  The configuration entries are exactly
+#  the same as above, but they are nested inside of a section.
+#
+#  You can have as many per-socket client lists as you have "listen"
+#  sections, or you can re-use a list among multiple "listen" sections.
+#
+#  Un-comment this section, and edit a "listen" section to add:
+#  "clients = per_socket_clients".  That IP address/port combination
+#  will then accept ONLY the clients listed in this section.
+#
+#  There are additional considerations when using clients from SQL.
+#
+#  A client can be link to a virtual server via modules such as SQL.
+#  This link is done via the following process:
+#
+#  If there is no listener in a virtual server, SQL clients are added
+#  to the global list for that virtual server.
+#
+#  If there is a listener, and the first listener does not have a
+#  "clients=..." configuration item, SQL clients are added to the
+#  global list.
+#
+#  If there is a listener, and the first one does have a "clients=..."
+#  configuration item, SQL clients are added to that list.  The client
+#  { ...} ` configured in that list are also added for that listener.
+#
+#  The only issue is if you have multiple listeners in a virtual
+#  server, each with a different client list, then the SQL clients are
+#  added only to the first listener.
+#
+#clients per_socket_clients {
+#	client socket_client {
+#		ipaddr = 192.0.2.4
+#		secret = testing123
+#	}
+#}
+#######################################################################
+# PAKDA HOTSPOT MIKROTIK - CONFIGURACION PERSONALIZADA
+# Agregado: 26 Enero 2026
+#######################################################################
+#client pakda_mikrotik_ddns {
+#    ipaddr = hk30ahrjqys.sn.mynetname.net
+ #   secret = BusWifi2026!
+  #  require_message_authenticator = yes
+  #  limit_proxy_state = no
+  #  nastype = mikrotik
+ #   shortname = pakda-hotspot-ddns
+#}#
+
+# COMENTAR O ELIMINAR ESTA SECCION (ya que el DDNS resuelve a la misma IP)
+#client pakda_mikrotik_ip {
+#    ipaddr = 190.108.85.85
+#    secret = BusWifi2026!
+#    require_message_authenticator = no
+#    nastype = mikrotik
+#    shortname = pakda-hotspot-ip
+#client mikrotik_bus {
+ #   ipaddr = 0.0.0.0/0
+  #  secret = BusWifi2026!
+   # shortname = mikrotik
+  #  nastype = mikrotik
+ #   require_message_authenticator = yes
+#}
+client mikrotik_bus {
+    ipaddr = 10.66.66.2
+    secret = BusWifi2026!
+    shortname = mikrotik
+    nastype = mikrotik
+    require_message_authenticator = yes
+    limit_proxy_state = auto
+}
+
+## 5. BASE DE DATOS
+Tables_in_radius
+batch_history
+billing_history
+billing_merchant
+billing_paypal
+billing_plans
+billing_plans_profiles
+billing_rates
+cui
+dictionary
+hotspots
+invoice
+invoice_items
+invoice_status
+invoice_type
+messages
+nas
+nasreload
+node
+operators
+operators_acl
+operators_acl_files
+payment
+payment_type
+planes
+proxys
+radacct
+radcheck
+radgroupcheck
+radgroupreply
+radhuntgroup
+radippool
+radpostauth
+radreply
+radusergroup
+realms
+userbillinfo
+userinfo
+wimax
+id	username	attribute	op	value
+8	00:E9:3A:1D:EE:AD	Cleartext-Password	:=	00:E9:3A:1D:EE:AD
+9	86:9A:98:4D:3A:3E	Cleartext-Password	:=	86:9A:98:4D:3A:3E
+id	username	attribute	op	value
+22	00:E9:3A:1D:EE:AD	Mikrotik-Group	:=	full
+23	00:E9:3A:1D:EE:AD	Session-Timeout	:=	3600
+24	00:E9:3A:1D:EE:AD	Idle-Timeout	:=	1800
+25	86:9A:98:4D:3A:3E	Mikrotik-Group	:=	full
+26	86:9A:98:4D:3A:3E	Session-Timeout	:=	3600
+27	86:9A:98:4D:3A:3E	Idle-Timeout	:=	1800
+
+## 6. ARCHIVOS WEB
+total 44K
+drwxr-xr-x 4 root     root     4.0K Feb  9 22:54 .
+drwxr-xr-x 4 root     root     4.0K Feb  8 18:24 ..
+-rw-r--r-- 1 root     root      755 Feb  9 22:35 api_pakda.php
+drwxr-xr-x 8 www-data www-data 4.0K Feb 10 17:00 daloradius
+-rw-r--r-- 1 root     root      11K Jan 25 18:48 index.html
+-rw-r--r-- 1 root     root       20 Feb  7 06:58 info.php
+drwxr-xr-x 3 root     root     4.0K Feb  8 19:40 pakda
+-rw-r--r-- 1 root     root      438 Feb  8 23:47 pakda-coa.php
+-rw-r--r-- 1 root     root      748 Feb  8 23:50 pakda-relogin.php
+
+=== Contenido archivos PHP ===
+
+### /var/www/html/api_pakda.php
+<?php
+$api_key_valida = "PAKDA_SECRET_2026";
+$key = $_GET['key'] ?? '';
+$mac = $_GET['mac'] ?? '';
+$uip = $_GET['uip'] ?? ''; // Recibimos la IP interna desde WordPress
+
+// Configuración de la VPN y el Secreto
+$ip_vpn_bus = "10.66.66.2"; 
+$radius_secret = "BusWifi2026!"; 
+
+if ($key !== $api_key_valida || empty($mac) || empty($uip)) {
+    die("Error: Faltan datos (MAC o IP).");
+}
+
+// El comando corregido que pide el MikroTik
+// El "Triple Golpe" para asegurar que el MikroTik remueva al usuario
+$comando = "echo \"User-Name=$mac,Calling-Station-Id=$mac,Framed-IP-Address=$uip\" | /usr/bin/radclient -x $ip_vpn_bus:3799 disconnect $radius_secret 2>&1";
+$output = shell_exec($comando);
+
+echo "--- REPORTE VPN PAKDA ---";
+echo "\nResultado: " . $output;
+
+### /var/www/html/info.php
+<?php phpinfo(); ?>
+
+### /var/www/html/pakda-coa.php
+<?php
+// Enviar RADIUS CoA (Disconnect) para forzar reautenticación
+
+$mac = $argv[1] ?? '';
+if (!$mac) die("Error: No MAC provided\n");
+
+// Comando radclient para enviar CoA
+$nas_ip = '190.108.85.85'; // IP pública del MikroTik
+$secret = 'BusWifi2026!';
+
+$attributes = "User-Name=$mac";
+
+exec("echo '$attributes' | radclient -x $nas_ip:3799 disconnect $secret", $output, $return);
+
+echo implode("\n", $output) . "\n";
+exit($return);
+?>
+
+### /var/www/html/pakda-relogin.php
+<?php
+// Script simple de reconexión (sin API de MikroTik por ahora)
+header('Content-Type: application/json');
+
+$secret = $_SERVER['HTTP_X_PAKDA_SECRET'] ?? '';
+if ($secret !== 'PakdaW3bh00k2026!') {
+    http_response_code(403);
+    die(json_encode(['error' => 'Forbidden']));
+}
+
+$input = json_decode(file_get_contents('php://input'), true);
+$mac = strtoupper(trim($input['mac'] ?? ''));
+
+if (!preg_match('/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/', $mac)) {
+    http_response_code(400);
+    die(json_encode(['error' => 'Invalid MAC']));
+}
+
+// Log simple
+file_put_contents('/tmp/pakda-relogin.log', date('Y-m-d H:i:s') . " - Relogin solicitado para: $mac\n", FILE_APPEND);
+
+http_response_code(200);
+echo json_encode(['status' => 'OK', 'mac' => $mac]);
+?>
+
+
+## 7. FIREWALL
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), disabled (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+3306/tcp                   ALLOW IN    Anywhere                  
+22/tcp                     ALLOW IN    Anywhere                  
+80/tcp                     ALLOW IN    Anywhere                  
+443/tcp                    ALLOW IN    Anywhere                  
+1812/udp                   ALLOW IN    Anywhere                  
+1813/udp                   ALLOW IN    Anywhere                  
+3306/tcp                   ALLOW IN    95.217.197.23             
+8443/udp                   ALLOW IN    Anywhere                  
+8444/udp                   ALLOW IN    Anywhere                  
+1700/udp                   ALLOW IN    Anywhere                  
+1701/udp                   ALLOW IN    Anywhere                  
+51820/udp                  ALLOW IN    Anywhere                  
+3306/tcp (v6)              ALLOW IN    Anywhere (v6)             
+22/tcp (v6)                ALLOW IN    Anywhere (v6)             
+80/tcp (v6)                ALLOW IN    Anywhere (v6)             
+443/tcp (v6)               ALLOW IN    Anywhere (v6)             
+1812/udp (v6)              ALLOW IN    Anywhere (v6)             
+1813/udp (v6)              ALLOW IN    Anywhere (v6)             
+8443/udp (v6)              ALLOW IN    Anywhere (v6)             
+8444/udp (v6)              ALLOW IN    Anywhere (v6)             
+1700/udp (v6)              ALLOW IN    Anywhere (v6)             
+1701/udp (v6)              ALLOW IN    Anywhere (v6)             
+51820/udp (v6)             ALLOW IN    Anywhere (v6)             
+
+Chain INPUT (policy DROP 296K packets, 16M bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+  217 34319 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:1701
+  788  204K ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:1700
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:444
+   95 44748 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:443
+    9   952 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:8444
+  115 31002 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:8443
+4894K  855M ufw-before-logging-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+4894K  855M ufw-before-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 394K   21M ufw-after-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 357K   19M ufw-after-logging-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 357K   19M ufw-reject-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 357K   19M ufw-track-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ufw-before-logging-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ufw-before-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ufw-after-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ufw-after-logging-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ufw-reject-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ufw-track-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain OUTPUT (policy ACCEPT 668 packets, 37310 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+5232K  836M ufw-before-logging-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+5232K  836M ufw-before-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 4281  330K ufw-after-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 4281  330K ufw-after-logging-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 4281  330K ufw-reject-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+ 4281  330K ufw-track-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-after-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-after-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ufw-skip-to-policy-input  17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:137
+    0     0 ufw-skip-to-policy-input  17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:138
+  428 23272 ufw-skip-to-policy-input  6    --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:139
+30044 1544K ufw-skip-to-policy-input  6    --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:445
+    0     0 ufw-skip-to-policy-input  17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:67
+    0     0 ufw-skip-to-policy-input  17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:68
+    0     0 ufw-skip-to-policy-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type BROADCAST
+
+Chain ufw-after-logging-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 LOG        0    --  *      *       0.0.0.0/0            0.0.0.0/0            limit: avg 3/min burst 10 LOG flags 0 level 4 prefix "[UFW BLOCK] "
+
+Chain ufw-after-logging-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+67072 3291K LOG        0    --  *      *       0.0.0.0/0            0.0.0.0/0            limit: avg 3/min burst 10 LOG flags 0 level 4 prefix "[UFW BLOCK] "
+
+Chain ufw-after-logging-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-after-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-before-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ACCEPT     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 3
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 11
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 12
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 8
+    0     0 ufw-user-forward  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-before-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+ 7274  791K ACCEPT     0    --  lo     *       0.0.0.0/0            0.0.0.0/0           
+2651K  592M ACCEPT     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+ 3596  484K ufw-logging-deny  0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+ 3596  484K DROP       0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate INVALID
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 3
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 11
+    0     0 ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 12
+53763 3762K ACCEPT     1    --  *      *       0.0.0.0/0            0.0.0.0/0            icmptype 8
+   89 32159 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp spt:67 dpt:68
+ 571K   32M ufw-not-local  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            224.0.0.251          udp dpt:5353
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            239.255.255.250      udp dpt:1900
+ 571K   32M ufw-user-input  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-before-logging-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-before-logging-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-before-logging-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-before-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+ 7295  793K ACCEPT     0    --  *      lo      0.0.0.0/0            0.0.0.0/0           
+3128K  557M ACCEPT     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+ 3529  262K ufw-user-output  0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-logging-allow (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 LOG        0    --  *      *       0.0.0.0/0            0.0.0.0/0            limit: avg 3/min burst 10 LOG flags 0 level 4 prefix "[UFW ALLOW] "
+
+Chain ufw-logging-deny (2 references)
+ pkts bytes target     prot opt in     out     source               destination         
+ 3415  474K RETURN     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate INVALID limit: avg 3/min burst 10
+  110  7760 LOG        0    --  *      *       0.0.0.0/0            0.0.0.0/0            limit: avg 3/min burst 10 LOG flags 0 level 4 prefix "[UFW BLOCK] "
+
+Chain ufw-not-local (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+ 571K   32M RETURN     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type LOCAL
+    0     0 RETURN     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type MULTICAST
+    0     0 RETURN     0    --  *      *       0.0.0.0/0            0.0.0.0/0            ADDRTYPE match dst-type BROADCAST
+    0     0 ufw-logging-deny  0    --  *      *       0.0.0.0/0            0.0.0.0/0            limit: avg 3/min burst 10
+    0     0 DROP       0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-reject-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-reject-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-reject-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-skip-to-policy-forward (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DROP       0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-skip-to-policy-input (7 references)
+ pkts bytes target     prot opt in     out     source               destination         
+30472 1568K DROP       0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-skip-to-policy-output (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ACCEPT     0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-track-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-track-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-track-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+  233 14015 ACCEPT     6    --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW
+ 2628  210K ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            ctstate NEW
+
+Chain ufw-user-forward (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-user-input (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+71834 4273K ACCEPT     6    --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:3306
+ 160K 9549K ACCEPT     6    --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:22
+ 8421  453K ACCEPT     6    --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80
+ 3638  184K ACCEPT     6    --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:443
+   30  3147 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:1812
+    7   978 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:1813
+    0     0 ACCEPT     6    --  *      *       95.217.197.23        0.0.0.0/0            tcp dpt:3306
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:8443
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:8444
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:1700
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:1701
+    0     0 ACCEPT     17   --  *      *       0.0.0.0/0            0.0.0.0/0            udp dpt:51820
+
+Chain ufw-user-limit (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 LOG        0    --  *      *       0.0.0.0/0            0.0.0.0/0            limit: avg 3/min burst 5 LOG flags 0 level 4 prefix "[UFW LIMIT BLOCK] "
+    0     0 REJECT     0    --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable
+
+Chain ufw-user-limit-accept (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ACCEPT     0    --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain ufw-user-logging-forward (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-user-logging-input (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-user-logging-output (0 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain ufw-user-output (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+
+## 8. DALORADIUS
+total 148K
+drwxr-xr-x 8 www-data www-data 4.0K Feb 10 17:00 .
+drwxr-xr-x 4 root     root     4.0K Feb  9 22:54 ..
+drwxr-xr-x 8 www-data www-data 4.0K Feb  7 17:51 .git
+drwxr-xr-x 3 www-data www-data 4.0K Feb  7 17:51 .github
+-rwxr-xr-x 1 www-data www-data  221 Feb  7 17:51 .gitignore
+-rwxr-xr-x 1 www-data www-data  158 Feb  7 17:51 .htpasswd
+-rwxr-xr-x 1 www-data www-data  25K Feb  7 17:51 ChangeLog
+-rwxr-xr-x 1 www-data www-data 2.2K Feb  7 17:51 Dockerfile
+-rwxr-xr-x 1 www-data www-data 1.4K Feb  7 17:51 Dockerfile-freeradius
+-rwxr-xr-x 1 www-data www-data 1.2K Feb  7 17:51 Dockerfile-standalone
+-rwxr-xr-x 1 www-data www-data 1.4K Feb  7 17:51 FAQS
+-rwxr-xr-x 1 www-data www-data  18K Feb  7 17:51 LICENSE
+-rwxr-xr-x 1 www-data www-data 1005 Feb  7 17:51 README.docker-standalone.md
+-rwxr-xr-x 1 www-data www-data 9.7K Feb  7 17:51 README.md
+-rwxr-xr-x 1 www-data www-data  916 Feb  7 17:51 SECURITY.md
+drwxr-xr-x 5 www-data www-data 4.0K Feb  7 17:51 app
+drwxr-xr-x 6 www-data www-data 4.0K Feb 10 16:47 contrib
+drwxr-xr-x 3 www-data www-data 4.0K Feb  7 17:51 doc
+-rwxr-xr-x 1 www-data www-data 1.6K Feb  7 17:51 docker-compose.yml
+-rw-r--r-- 1 www-data www-data   54 Feb 10 17:00 index.php
+-rwxr-xr-x 1 www-data www-data 6.4K Feb  7 17:51 init-freeradius.sh
+-rwxr-xr-x 1 www-data www-data 5.0K Feb  7 17:51 init.sh
+drwxr-xr-x 2 www-data www-data 4.0K Feb  7 17:51 setup
+<?php
+/*
+ *********************************************************************************************************
+ * daloRADIUS - RADIUS Web Platform
+ * Copyright (C) 2007 - Liran Tal <liran@lirantal.com> All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ *********************************************************************************************************
+ *
+ * Description:          daloRADIUS Configuration File
+ *
+ * Modification Date:    Mon Mar 13 15:55:00 CET 2023
+ *
+ *********************************************************************************************************
+ */
+
+$configValues['FREERADIUS_VERSION'] = '3';
+$configValues['CONFIG_DB_ENGINE'] = 'mysqli';
+$configValues['CONFIG_DB_HOST']   = '127.0.0.1';
+$configValues['CONFIG_DB_PORT']   = '3306';
+$configValues['CONFIG_DB_USER']   = 'radius';
+$configValues['CONFIG_DB_PASS']   = 's1p2aa3y5A';
+$configValues['CONFIG_DB_NAME']   = 'radius';
+$configValues['CONFIG_IFACE_CIA_CHECK_PERMISSIONS'] = 'no';
+$configValues['CONFIG_DB_TBL_RADCHECK'] = 'radcheck';
+$configValues['CONFIG_DB_TBL_RADREPLY'] = 'radreply';
+$configValues['CONFIG_DB_TBL_RADGROUPREPLY'] = 'radgroupreply';
+$configValues['CONFIG_DB_TBL_RADGROUPCHECK'] = 'radgroupcheck';
+$configValues['CONFIG_DB_TBL_RADUSERGROUP'] = 'radusergroup';
+$configValues['CONFIG_DB_TBL_RADNAS'] = 'nas';
+$configValues['CONFIG_DB_TBL_RADHG'] = 'radhuntgroup';
+$configValues['CONFIG_DB_TBL_RADPOSTAUTH'] = 'radpostauth';
+$configValues['CONFIG_DB_TBL_RADACCT'] = 'radacct';
+$configValues['CONFIG_DB_TBL_RADIPPOOL'] = 'radippool';
+$configValues['CONFIG_DB_TBL_DALOOPERATORS'] = 'operators';
+$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL'] = 'operators_acl';
+$configValues['CONFIG_DB_TBL_DALOOPERATORS_ACL_FILES'] = 'operators_acl_files';
+$configValues['CONFIG_DB_TBL_DALORATES'] = 'rates';
+$configValues['CONFIG_DB_TBL_DALOHOTSPOTS'] = 'hotspots';
+$configValues['CONFIG_DB_TBL_DALOUSERINFO'] = 'userinfo';
+$configValues['CONFIG_DB_TBL_DALOUSERBILLINFO'] = 'userbillinfo';
+$configValues['CONFIG_DB_TBL_DALODICTIONARY'] = 'dictionary';
+$configValues['CONFIG_DB_TBL_DALOREALMS'] = 'realms';
+$configValues['CONFIG_DB_TBL_DALOPROXYS'] = 'proxys';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPAYPAL'] = 'billing_paypal';
+$configValues['CONFIG_DB_TBL_DALOBILLINGMERCHANT'] = 'billing_merchant';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPLANS'] = 'billing_plans';
+$configValues['CONFIG_DB_TBL_DALOBILLINGRATES'] = 'billing_rates';
+$configValues['CONFIG_DB_TBL_DALOBILLINGHISTORY'] = 'billing_history';
+$configValues['CONFIG_DB_TBL_DALOBATCHHISTORY'] = 'batch_history';
+$configValues['CONFIG_DB_TBL_DALOBILLINGPLANSPROFILES'] = 'billing_plans_profiles';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICE'] = 'invoice';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICEITEMS'] = 'invoice_items';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICESTATUS'] = 'invoice_status';
+$configValues['CONFIG_DB_TBL_DALOBILLINGINVOICETYPE'] = 'invoice_type';
+$configValues['CONFIG_DB_TBL_DALOPAYMENTS'] = 'payment';
+$configValues['CONFIG_DB_TBL_DALOPAYMENTTYPES'] = 'payment_type';
+$configValues['CONFIG_DB_TBL_DALONODE'] = 'node';
+$configValues['CONFIG_DB_TBL_DALOMESSAGES'] = 'messages';
+$configValues['CONFIG_FILE_RADIUS_PROXY'] = '/etc/freeradius/3.0/proxy.conf';
+$configValues['CONFIG_PATH_RADIUS_DICT'] = '';
+$configValues['CONFIG_PATH_DALO_VARIABLE_DATA'] = '/var/www/daloradius/var';
+$configValues['CONFIG_PATH_DALO_TEMPLATES_DIR'] = '/var/www/daloradius/app/common/templates';
+$configValues['CONFIG_DB_PASSWORD_ENCRYPTION'] = 'no';
+$configValues['CONFIG_LANG'] = 'en';
+$configValues['CONFIG_LOG_PAGES'] = 'no';
+$configValues['CONFIG_LOG_ACTIONS'] = 'no';
+$configValues['CONFIG_LOG_QUERIES'] = 'no';
+$configValues['CONFIG_DEBUG_SQL'] = 'no';
+$configValues['CONFIG_DEBUG_SQL_ONPAGE'] = 'no';
+$configValues['CONFIG_LOG_FILE'] = '/var/www/daloradius/var/log/daloradius.log';
+$configValues['CONFIG_SYSLOG_FILE'] = '/var/log/syslog';
+$configValues['CONFIG_RADIUSLOG_FILE'] = '/var/log/freeradius/radius.log';
+$configValues['CONFIG_BOOTLOG_FILE'] = '/var/log/boot.log';
+$configValues['CONFIG_IFACE_PASSWORD_HIDDEN'] = 'no';
+$configValues['CONFIG_IFACE_TABLES_LISTING'] = '25';
+$configValues['CONFIG_IFACE_TABLES_LISTING_NUM'] = 'yes';
+$configValues['CONFIG_IFACE_AUTO_COMPLETE'] = 'yes';
+$configValues['CONFIG_MAINT_TEST_USER_RADIUSSERVER'] = '127.0.0.1';
+$configValues['CONFIG_MAINT_TEST_USER_RADIUSPORT'] = '1812';
+$configValues['CONFIG_MAINT_TEST_USER_NASPORT'] = '0';
+$configValues['CONFIG_MAINT_TEST_USER_RADIUSSECRET'] = 'testing123';
+$configValues['CONFIG_USER_ALLOWEDRANDOMCHARS'] = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+$configValues['CONFIG_MAIL_SMTPADDR'] = '127.0.0.1';
+$configValues['CONFIG_MAIL_SMTPPORT'] = '25';
+$configValues['CONFIG_MAIL_SMTPAUTH'] = '';
+$configValues['CONFIG_MAIL_SMTPFROM'] = 'root@daloradius.xdsl.by';
+$configValues['CONFIG_MAIL_ENABLED'] = 'no';
+$configValues['CONFIG_MAIL_SMTP_SECURITY'] = 'tls';
+$configValues['CONFIG_MAIL_SMTP_SENDER_NAME'] = 'daloRADIUS Mailer';
+$configValues['CONFIG_MAIL_SMTP_SUBJECT_PREFIX'] = '[daloRADIUS]';
+$configValues['CONFIG_MAIL_SMTP_USERNAME'] = '';
+$configValues['CONFIG_MAIL_SMTP_PASSWORD'] = '';
+$configValues['CONFIG_MAIL_CHARSET'] = 'utf-8';
+$configValues['CONFIG_DASHBOARD_DALO_SECRETKEY'] = 'sillykey';
+$configValues['CONFIG_DASHBOARD_DALO_DEBUG'] = '1';
+$configValues['CONFIG_DASHBOARD_DALO_DELAYSOFT'] = '5';
+$configValues['CONFIG_DASHBOARD_DALO_DELAYHARD'] = '15';
+$configValues['CONFIG_DB_PASSWORD_MAX_LENGTH'] = '14';
+$configValues['CONFIG_DB_PASSWORD_MIN_LENGTH'] = '8';
+$configValues['CONFIG_FIX_STALE_ENABLED'] = 'no';
+$configValues['CONFIG_FIX_STALE_INTERVAL'] = '60';
+$configValues['CONFIG_FIX_STALE_GRACE'] = '30';
+$configValues['CONFIG_NODE_STATUS_MONITOR_ENABLED'] = 'no';
+$configValues['CONFIG_NODE_STATUS_MONITOR_HARD_DELAY'] = '15';
+$configValues['CONFIG_USER_TRAFFIC_MONITOR_ENABLED'] = 'no';
+$configValues['CONFIG_USER_TRAFFIC_MONITOR_HARDLIMIT'] = '1073741824';
+$configValues['CONFIG_USER_TRAFFIC_MONITOR_SOFTLIMIT'] = '536870912';
+$configValues['CONFIG_USER_VPN_SERVER'] = 'vpn.company.com';
+
+
+
+// invoice templates - optional
+$configValues['CONFIG_INVOICE_TEMPLATE'] = 'invoice_template.html';
+$configValues['CONFIG_INVOICE_ITEM_TEMPLATE'] = 'invoice_item_template.html';
+
+/*
+// Locations Configuration directives
+// Locations directives are support for accessing different databases from the daloRADIUS Login console
+// adjust the locations below for databases you are running (if you are running more than one).
+// You could configure invoice templates for each location - optional.
+$configValues['CONFIG_LOCATIONS'] = array(
+    "Location Example 1" => array(
+                                    "Engine"   => "mysql",
+                                    "Username" => "root",
+                                    "Password" => "",
+                                    "Database" => "radius",
+                                    "Hostname" => "127.0.0.1",
+                                    "Port"     => "3306",
+                                    "CONFIG_INVOICE_TEMPLATE" => "invoice_template_location_1.html",
+                                    "CONFIG_INVOICE_ITEM_TEMPLATE" => "invoice_item_template_location_1.html"
+                                 ),
+
+    "Location Example 2" => array(
+                                    "Engine"   => "mysql",
+                                    "Username" => "db_usertest",
+                                    "Password" => "db_passtest",
+                                    "Database" => "test_db1",
+                                    "Hostname" => "localhost",
+                                    "Port"     => "3306"
+                                 )
+);
+*/
+
+## 9. SCRIPTS PAKDA
+/root/fix_pakda_hotspot.sh
+/root/pakda-ssh.pub
+/root/cambiar-puertos-radius.sh
+/root/backup_pakda_2026-02-10
+/root/pakda-audit.sh
+/root/pakda-backup-20260224-203352.txt
+
+### /root/fix_pakda_hotspot.sh
+#!/bin/bash
+
+set -e
+
+FILE="/etc/freeradius/3.0/sites-enabled/pakda-hotspot"
+BACKUP="${FILE}.bak.$(date +%F_%H%M%S)"
+
+echo "🔐 Backup en: $BACKUP"
+cp "$FILE" "$BACKUP"
+
+echo "✍️ Reescribiendo pakda-hotspot..."
+
+cat << 'CONF' > "$FILE"
+server pakda-hotspot {
+
+    listen {
+        type = auth
+        ipaddr = *
+        port = 1812
+    }
+
+    listen {
+        type = acct
+        ipaddr = *
+        port = 1813
+    }
+
+    authorize {
+
+        #
+        # Normaliza MAC: 869A984D3A3E → 86:9A:98:4D:3A:3E
+        #
+        if (User-Name =~ /^[0-9A-Fa-f]{12}$/) {
+            update control {
+                Tmp-String-0 := "%{User-Name}"
+                Tmp-String-0 := "%{regex:^([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})([0-9A-Fa-f]{2})$:%{Tmp-String-0}:\1:\2:\3:\4:\5:\6}"
+            }
+            update request {
+                User-Name := "%{control:Tmp-String-0}"
+            }
+        }
+
+        sql
+    }
+
+    authenticate {
+        Auth-Type Accept {
+            ok
+        }
+    }
+
+    accounting {
+        sql
+    }
+
+}
+CONF
+
+echo "🧪 Validando configuración FreeRADIUS..."
+freeradius -Cx
+
+echo "✅ Configuración válida"
+echo "👉 Ejecuta ahora:"
+echo "   systemctl restart freeradius"
+
+### /root/pakda-ssh.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOd6VI6qL5mDYQgXUSk6kZiMgtfrBo6HCfst4PCNa716 root@vmi3041985
+
+### /root/cambiar-puertos-radius.sh
+#!/bin/bash
+# Script para cambiar puertos RADIUS a 1700/1701
+# Uso: bash cambiar-puertos-radius.sh
+
+echo "========================================="
+echo "CAMBIO DE PUERTOS RADIUS A 1700/1701"
+echo "========================================="
+echo ""
+
+# Backup del archivo original
+echo "[1/5] Creando backup..."
+cp /etc/freeradius/3.0/sites-enabled/default /etc/freeradius/3.0/sites-enabled/default.backup-$(date +%Y%m%d-%H%M%S)
+echo "✓ Backup creado"
+echo ""
+
+# Cambiar puertos 443 → 1700
+echo "[2/5] Cambiando puerto 443 a 1700..."
+sed -i 's/port = 443/port = 1700/g' /etc/freeradius/3.0/sites-enabled/default
+echo "✓ Puerto 443 → 1700"
+echo ""
+
+# Cambiar puertos 444 → 1701
+echo "[3/5] Cambiando puerto 444 a 1701..."
+sed -i 's/port = 444/port = 1701/g' /etc/freeradius/3.0/sites-enabled/default
+echo "✓ Puerto 444 → 1701"
+echo ""
+
+# Abrir puertos en firewall
+echo "[4/5] Abriendo puertos en firewall..."
+iptables -I INPUT -p udp --dport 1700 -j ACCEPT
+iptables -I INPUT -p udp --dport 1701 -j ACCEPT
+echo "✓ Firewall configurado"
+echo ""
+
+# Reiniciar FreeRADIUS
+echo "[5/5] Reiniciando FreeRADIUS..."
+systemctl restart freeradius
+sleep 2
+echo ""
+
+# Verificar estado
+echo "========================================="
+echo "VERIFICANDO CONFIGURACIÓN"
+echo "========================================="
+echo ""
+
+# Ver si está corriendo
+if systemctl is-active --quiet freeradius; then
+    echo "✓ FreeRADIUS está corriendo"
+else
+    echo "✗ ERROR: FreeRADIUS NO está corriendo"
+    echo ""
+    echo "Ver detalles con: journalctl -xeu freeradius.service"
+    exit 1
+fi
+
+# Ver puertos
+echo ""
+echo "Puertos en escucha:"
+netstat -ulnp | grep freeradius | grep -E "1700|1701"
+
+echo ""
+echo "========================================="
+echo "✓ CONFIGURACIÓN COMPLETADA"
+echo "========================================="
+echo ""
+echo "Próximos pasos:"
+echo "1. En MikroTik ejecuta:"
+echo "   /radius set 0 authentication-port=1700 accounting-port=1701"
+echo ""
+echo "2. Prueba la conexión:"
+echo "   /ip hotspot active remove [find]"
+echo ""
+echo "3. Reconecta tu celular al WiFi"
+echo ""
+
+
+### /root/backup_pakda_2026-02-10
+cat: /root/backup_pakda_2026-02-10: Is a directory
+
+### /root/pakda-audit.sh
+#!/bin/bash
+# PAKDA HOTSPOT - AUDITORÍA COMPLETA
+REPORT="/root/pakda-backup-$(date +%Y%m%d-%H%M%S).txt"
+
+echo "=====================================" > $REPORT
+echo "PAKDA HOTSPOT - CONFIGURACIÓN COMPLETA" >> $REPORT
+echo "Fecha: $(date)" >> $REPORT
+echo "=====================================" >> $REPORT
+
+# 1. SISTEMA
+echo -e "\n## 1. SISTEMA" >> $REPORT
+cat /etc/os-release | grep PRETTY_NAME >> $REPORT
+uname -r >> $REPORT
+
+# 2. SERVICIOS
+echo -e "\n## 2. SERVICIOS" >> $REPORT
+systemctl status freeradius --no-pager >> $REPORT 2>&1
+systemctl status mysql --no-pager >> $REPORT 2>&1
+systemctl status apache2 --no-pager >> $REPORT 2>&1
+
+# 3. PUERTOS
+echo -e "\n## 3. PUERTOS" >> $REPORT
+lsof -i -P -n | grep LISTEN >> $REPORT 2>&1
+
+# 4. FREERADIUS
+echo -e "\n## 4. FREERADIUS CONFIG" >> $REPORT
+echo "=== /etc/freeradius/3.0/sites-enabled/default ===" >> $REPORT
+cat /etc/freeradius/3.0/sites-enabled/default >> $REPORT 2>&1
+echo -e "\n=== /etc/freeradius/3.0/clients.conf ===" >> $REPORT
+cat /etc/freeradius/3.0/clients.conf >> $REPORT 2>&1
+
+# 5. BASE DE DATOS
+echo -e "\n## 5. BASE DE DATOS" >> $REPORT
+mysql -u radius -ps1p2aa3y5A radius -e "SHOW TABLES;" >> $REPORT 2>&1
+mysql -u radius -ps1p2aa3y5A radius -e "SELECT * FROM radcheck LIMIT 5;" >> $REPORT 2>&1
+mysql -u radius -ps1p2aa3y5A radius -e "SELECT * FROM radreply LIMIT 10;" >> $REPORT 2>&1
+
+# 6. ARCHIVOS WEB
+echo -e "\n## 6. ARCHIVOS WEB" >> $REPORT
+ls -lah /var/www/html/ >> $REPORT 2>&1
+echo -e "\n=== Contenido archivos PHP ===" >> $REPORT
+for file in /var/www/html/*.php; do
+    echo -e "\n### $file" >> $REPORT
+    cat "$file" >> $REPORT 2>&1
+done
+
+# 7. FIREWALL
+echo -e "\n## 7. FIREWALL" >> $REPORT
+ufw status verbose >> $REPORT 2>&1
+iptables -L -n -v >> $REPORT 2>&1
+
+# 8. DALORADIUS
+echo -e "\n## 8. DALORADIUS" >> $REPORT
+ls -lah /var/www/html/daloradius/ >> $REPORT 2>&1
+cat /var/www/html/daloradius/app/common/includes/daloradius.conf.php >> $REPORT 2>&1
+
+# 9. SCRIPTS
+echo -e "\n## 9. SCRIPTS PAKDA" >> $REPORT
+find /root -name "*pakda*" -o -name "*cambiar*" >> $REPORT 2>&1
+for script in $(find /root -name "*pakda*" -o -name "*cambiar*"); do
+    echo -e "\n### $script" >> $REPORT
+    cat "$script" >> $REPORT 2>&1
+done
+
+# 10. LOGS
+echo -e "\n## 10. LOGS RECIENTES" >> $REPORT
+tail -50 /var/log/freeradius/radius.log >> $REPORT 2>&1
+
+echo -e "\n=====================================" >> $REPORT
+echo "AUDITORÍA COMPLETADA: $REPORT" >> $REPORT
+echo "=====================================" >> $REPORT
+
+echo "✅ Auditoría guardada en: $REPORT"
+
+### /root/pakda-backup-20260224-203352.txt
+cat: /root/pakda-backup-20260224-203352.txt: input file is output file
+
+## 10. LOGS RECIENTES
+
+=====================================
+AUDITORÍA COMPLETADA: /root/pakda-backup-20260224-203352.txt
+=====================================
