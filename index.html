@@ -597,7 +597,7 @@
         const res = await fetch(candidate);
         if(!res.ok) continue;
         const data = await res.json();
-        if(Array.isArray(data.features) && data.features.length > 5) {
+        if(Array.isArray(data.features) && data.features.length > 20) {
           geo = data;
           loadedFromFile = true;
           break;
@@ -631,7 +631,7 @@ if(!geo) {
   };
 }
 
-const isFallbackGeo = false; // <-- forzar estilo limpio siempre
+const isFallbackGeo = !loadedFromFile;
 
     const peruDepartments = L.geoJSON(geo, {
       style: {

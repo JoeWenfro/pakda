@@ -4,6 +4,10 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "peru_departamental_simple.geojson",
+      "use": "@vercel/static"
     }
   ]
 }
