@@ -1,8 +1,8 @@
 {
   "name": "pakda-landing",
   "version": "1.0.0",
-  "description": "PAKDA landing pages - V2 and V3",
-  "main": "pakda-landing-v2.html",
+  "description": "PAKDA landing page V3",
+  "main": "index.html",
   "scripts": {
     "dev": "echo 'Static HTML site - no dev server needed'",
     "build": "echo 'Static HTML site - no build needed'"
