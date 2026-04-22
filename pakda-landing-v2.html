@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PAKDA — WiFi a Bordo · Conectividad Inteligente</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- AOS -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet"/>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<!-- GSAP + ScrollTrigger + SplitText alternative -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { display: ['Syne','sans-serif'], body: ['DM Sans','sans-serif'] },
+        colors: {
+          ink:    '#f5f9ff',
+          abyss:  '#d9e8ff',
+          panel:  '#ffffff',
+          cyan:   '#1e5bbf',
+          ice:    '#4e84dc',
+          gold:   '#6f9af0',
+          slate:  '#4b6284',
+          ghost:  'rgba(30,91,191,0.08)',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  :root{
+    --cyan:#1e5bbf;
+    --cyan-soft:#4e84dc;
+    --gold:#6f9af0;
+    --ink:#f5f9ff;
+    --text:#15325d;
+    --panel:rgba(255,255,255,0.85);
+    --border:rgba(30,91,191,0.2);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--text);overflow-x:hidden;}
+  body{background:radial-gradient(circle at 10% 10%,rgba(30,91,191,0.08) 0%,transparent 35%),linear-gradient(180deg,#ffffff 0%,#f4f8ff 100%);}
+
+  /* ── Custom cursor ── */
+  #cursor{position:fixed;width:10px;height:10px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;opacity:.9;}
+  #cursor-ring{position:fixed;width:38px;height:38px;border:1.5px solid rgba(30,91,191,0.45);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .12s ease,width .3s,height .3s,border-color .3s;}
+  body:hover #cursor{opacity:1;}
+
+  @media (pointer:coarse){
+    #cursor,#cursor-ring{display:none;}
+  }
+
+  /* ── Canvas BG ── */
+  #bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+  /* ── Noise overlay ── */
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");z-index:1;pointer-events:none;opacity:.14;}
+
+  /* ── All content above canvas ── */
+  nav,section,footer{position:relative;z-index:2;}
+
+  /* ── Nav ── */
+  #main-nav{backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);background:rgba(255,255,255,0.78);border-bottom:1px solid var(--border);}
+
+  /* ── Gradient text ── */
+  .grad-text{background:linear-gradient(135deg,#184086 0%,var(--cyan) 45%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .grad-cyan{background:linear-gradient(135deg,#184086,var(--cyan-soft));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+  /* ── Glow ── */
+  .glow-cyan{text-shadow:0 0 24px rgba(30,91,191,0.28);}
+  .box-glow{box-shadow:0 12px 40px rgba(30,91,191,0.1),inset 0 1px 0 rgba(255,255,255,0.9);}
+  .btn-glow{box-shadow:0 0 0 0 rgba(30,91,191,0.35);animation:btnPulse 2.5s ease-in-out infinite;}
+  @keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,91,191,0.3),0 8px 20px rgba(30,91,191,0.25);}50%{box-shadow:0 0 0 14px rgba(30,91,191,0),0 10px 28px rgba(30,91,191,0.22);}}
+
+  /* ── Grid pattern ── */
+  .grid-bg{background-image:linear-gradient(rgba(30,91,191,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(30,91,191,0.06) 1px,transparent 1px);background-size:60px 60px;}
+
+  /* ── Cards ── */
+  .glass-card{background:rgba(255,255,255,0.78);border:1px solid var(--border);backdrop-filter:blur(12px);transition:transform .4s ease,border-color .4s ease,box-shadow .4s ease;}
+  .glass-card:hover{transform:translateY(-6px);border-color:rgba(30,91,191,0.35);box-shadow:0 20px 50px rgba(30,91,191,0.12);}
+
+  /* ── Step connector ── */
+  .step-connector{background:linear-gradient(90deg,var(--cyan),transparent);height:1px;flex:1;}
+
+  /* ── Tag badge ── */
+  .tag{display:inline-block;padding:4px 16px;border-radius:99px;border:1px solid rgba(30,91,191,0.35);font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);font-family:'Syne',sans-serif;font-weight:700;background:rgba(255,255,255,0.7);}
+
+  /* ── Hero headline ── */
+  .hero-char{display:inline-block;opacity:0;transform:translateY(60px) rotateX(-40deg);}
+
+  /* ── Satellite orbit ── */
+  .orbit-path{animation:orbitSpin 18s linear infinite;}
+  @keyframes orbitSpin{from{transform:rotate(0deg) translateX(160px) rotate(0deg);}to{transform:rotate(360deg) translateX(160px) rotate(-360deg);}}
+
+  /* ── Signal expand ── */
+  .signal-expand{animation:sigEx 3s ease-out infinite;}
+  @keyframes sigEx{0%{transform:scale(0);opacity:.9;}100%{transform:scale(1);opacity:0;}}
+
+  /* ── Bus drive ── */
+  [id^="bus-gsap"]{filter:drop-shadow(0 0 8px rgba(30,91,191,0.45));}
+
+  /* ── Scroll indicator ── */
+  .scroll-dot{animation:scrollBounce 2s ease-in-out infinite;}
+  @keyframes scrollBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(10px);}}
+
+  /* ── Peru map routes ── */
+  .route-path{stroke-dasharray:620;stroke-dashoffset:620;}
+
+  .peru-map-shell{position:relative;border:1px solid rgba(30,91,191,0.2);background:linear-gradient(145deg,rgba(255,255,255,0.88),rgba(233,243,255,0.8));padding:18px;border-radius:6px;box-shadow:0 20px 45px rgba(30,91,191,0.12);overflow:hidden;}
+  .peru-binary{position:absolute;inset:0;opacity:.2;pointer-events:none;background-image:repeating-linear-gradient(0deg,rgba(30,91,191,0.12) 0 1px,transparent 1px 18px),repeating-linear-gradient(90deg,rgba(30,91,191,0.09) 0 1px,transparent 1px 18px);}
+  .network-ray{stroke:rgba(30,91,191,0.3);stroke-width:1;stroke-dasharray:5 6;animation:rayFlow 2.8s linear infinite;}
+  .province-dot{animation:dotBlink 2.4s ease-in-out infinite;}
+  #peru-map-leaflet{height:520px;width:100%;border:1px solid rgba(30,91,191,0.22);border-radius:6px;box-shadow:0 20px 45px rgba(30,91,191,0.12);overflow:hidden;z-index:5;}
+  #peru-map-leaflet .leaflet-control-attribution{font-size:10px;}
+  .bus-marker{font-size:14px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.3));}
+  .dept-path{fill:url(#peruFill);stroke:rgba(30,91,191,0.4);stroke-width:.8;transition:fill .25s ease;}
+  .dept-path:hover{fill:rgba(30,91,191,0.16);}
+  .map-label{font-family:'Syne',sans-serif;font-size:6.7px;fill:#1e5bbf;letter-spacing:.04em;pointer-events:none;}
+  @keyframes rayFlow{0%{stroke-dashoffset:40;opacity:.35;}50%{opacity:.75;}100%{stroke-dashoffset:0;opacity:.35;}}
+  @keyframes dotBlink{0%,100%{opacity:.7;}50%{opacity:1;}}
+
+  /* ── Floating badge ── */
+  .float-anim{animation:floatY 4s ease-in-out infinite;}
+  @keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+
+  /* ── Counter ── */
+  .count-anim{transition:all .1s;}
+
+  /* ── Horizontal ticker ── */
+  .ticker-wrap{overflow:hidden;white-space:nowrap;}
+  .ticker-inner{display:inline-flex;animation:ticker 20s linear infinite;}
+  .ticker-inner:hover{animation-play-state:paused;}
+  @keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%)}}
+
+  /* ── Pay badge hover ── */
+  .pay-chip{transition:all .3s ease;cursor:default;}
+  .pay-chip:hover{background:rgba(30,91,191,0.12);border-color:var(--cyan);transform:scale(1.05);}
+
+  /* ── Scanline ── */
+  .scanline::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(30,91,191,0.02) 2px,rgba(30,91,191,0.02) 4px);pointer-events:none;}
+
+  .text-white,.text-white\/90{color:#16396c!important;}
+  .text-slate{color:#4b6284!important;}
+
+  .hero-brand{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:14px;
+    margin-top:18px;
+    padding:8px 18px;
+    border:1px solid rgba(30,91,191,0.22);
+    background:rgba(255,255,255,0.85);
+    box-shadow:0 12px 30px rgba(30,91,191,0.12);
+  }
+  .hero-brand-name{font-family:'Syne',sans-serif;font-size:clamp(2.3rem,5.2vw,4.5rem);font-weight:800;letter-spacing:.08em;line-height:.92;color:#1a3f76;}
+  .hero-brand-name .pakda-letter{display:inline-block;opacity:0;transform:translateY(30px) scale(.96);}
+  .hero-brand-sat{position:relative;width:58px;height:58px;display:grid;place-items:center;border-radius:999px;background:radial-gradient(circle,rgba(30,91,191,0.2),rgba(30,91,191,0.04));}
+  .hero-brand-sat svg{width:34px;height:34px;animation:satPulse 2.2s ease-in-out infinite;}
+  .hero-brand-sat::before{content:'';position:absolute;inset:4px;border-radius:999px;border:1px dashed rgba(30,91,191,0.38);animation:satSpin 6s linear infinite;}
+  @keyframes satSpin{to{transform:rotate(360deg);}}
+  @keyframes satPulse{0%,100%{transform:translateY(0) rotate(-8deg);}50%{transform:translateY(-4px) rotate(6deg);}}
+
+  .icon-svg{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .icon-lg{width:1.45em;height:1.45em;}
+  .icon-xl{width:1.65em;height:1.65em;}
+
+  #contacto input{background:rgba(255,255,255,0.92)!important;color:#17335f!important;border-color:rgba(30,91,191,0.22)!important;}
+  #contacto input::placeholder{color:#6f84a5;}
+
+  /* AOS custom */
+  [data-aos]{transition-timing-function:cubic-bezier(.22,.61,.36,1)!important;}
+</style>
+</head>
+<body class="bg-ink">
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<svg width="0" height="0" style="position:absolute;left:-9999px;top:-9999px;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-satellite" viewBox="0 0 24 24"><rect x="9" y="9" width="6" height="6" rx="1.2"></rect><path d="M3 10h5M16 10h5M3 14h5M16 14h5"></path><path d="M12 5v4M12 15v4"></path><circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 3.8 19h16.4L12 4z"></path><path d="M12 9v5"></path><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"></circle></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="8"></ellipse><path d="M14.8 8.8c-.6-.7-1.6-1.1-2.8-1.1-1.7 0-2.8.8-2.8 2s1.1 1.8 2.8 2c1.7.2 2.8.8 2.8 2s-1.1 2-2.8 2c-1.2 0-2.2-.4-2.8-1.1"></path></symbol>
+    <symbol id="i-chart-down" viewBox="0 0 24 24"><path d="M4 4v16h16"></path><path d="m7 9 4 4 3-3 3 3"></path></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2 8c5.5-4 14.5-4 20 0"></path><path d="M5 12c4-3 10-3 14 0"></path><path d="M8.5 15.5c2-1.6 5-1.6 7 0"></path><circle cx="12" cy="19" r="1.2" fill="currentColor" stroke="none"></circle></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.5 2.5 15.5 0 18M12 3c-2.5 2.5-2.5 15.5 0 18"></path></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"></rect><path d="M3 10h18"></path><path d="M7 14h4"></path></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M14 4c3 1 5 4 6 7-2.5.4-4.8-.2-6.4-1.8-1.6-1.6-2.2-3.9-1.8-6.4.7.1 1.5.3 2.2.2z"></path><path d="M10 10 4 16l4 1 1 4 6-6"></path><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"></circle></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 5 13h6l-1 9 8-11h-6l1-9z"></path></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 20V9M10 20V5M16 20v-8M22 20v-4"></path></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 5 3 8 7 9 4-1 7-4 7-9V6l-7-3z"></path><path d="m9 12 2 2 4-4"></path></symbol>
+    <symbol id="i-antenna" viewBox="0 0 24 24"><path d="M12 12v8M8 20h8"></path><path d="M12 12 8 8M12 12l4-4"></path><path d="M5.5 8.5a9 9 0 0 1 13 0M8.2 11.2a5.5 5.5 0 0 1 7.6 0"></path></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path><circle cx="9" cy="6" r="1.6" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12" r="1.6" fill="currentColor" stroke="none"></circle><circle cx="11" cy="18" r="1.6" fill="currentColor" stroke="none"></circle></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v4a4 4 0 0 1-8 0V4z"></path><path d="M8 6H5a2 2 0 0 0 2 3M16 6h3a2 2 0 0 1-2 3"></path><path d="M12 12v4M9 20h6"></path></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M21 6.5a5 5 0 0 1-6.7 4.7L7 18.5a2 2 0 1 1-2.8-2.8l7.3-7.3A5 5 0 0 1 16.2 2L13.8 4.4l2.8 2.8L21 6.5z"></path></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1.5"></rect><rect x="3" y="14" width="18" height="6" rx="1.5"></rect><path d="M7 7h.01M7 17h.01"></path></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 4v2.2M12 17.8V20M4 12h2.2M17.8 12H20M6.3 6.3l1.6 1.6M16.1 16.1l1.6 1.6M17.7 6.3l-1.6 1.6M7.9 16.1l-1.6 1.6"></path></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13.5 8.2 15.3a3 3 0 0 1-4.2-4.2L7.5 7.6a3 3 0 0 1 4.2 0"></path><path d="M14 10.5 15.8 8.7a3 3 0 1 1 4.2 4.2l-3.5 3.5a3 3 0 0 1-4.2 0"></path><path d="M9 15 15 9"></path></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 1 1 8 0v3"></path></symbol>
+    <symbol id="i-bus" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="12" rx="2"></rect><path d="M4 10h16M7 17v2M17 17v2"></path><circle cx="8" cy="18" r="1.4" fill="currentColor" stroke="none"></circle><circle cx="16" cy="18" r="1.4" fill="currentColor" stroke="none"></circle></symbol>
+  </defs>
+</svg>
+
+<!-- Three.js canvas background -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
+<nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 px-8 md:px-16 py-5 flex items-center justify-between">
+  <a href="#" class="font-display font-extrabold text-2xl tracking-widest grad-cyan">PAK<span class="text-white/90">DA</span></a>
+  <ul class="hidden md:flex items-center gap-10 font-body text-sm font-medium tracking-wide text-slate">
+    <li><a href="#solucion" class="hover:text-cyan transition-colors duration-300">Solución</a></li>
+    <li><a href="#como" class="hover:text-cyan transition-colors duration-300">Cómo funciona</a></li>
+    <li><a href="#beneficios" class="hover:text-cyan transition-colors duration-300">Beneficios</a></li>
+    <li><a href="#mapa" class="hover:text-cyan transition-colors duration-300">Cobertura</a></li>
+  </ul>
+  <a href="#contacto" class="hidden md:inline-flex items-center gap-2 bg-cyan text-ink font-display font-bold text-sm tracking-widest px-6 py-3 rounded-sm hover:bg-white transition-all duration-300 btn-glow">
+    SER SOCIO <span>→</span>
+  </a>
+</nav>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-24 pb-16 grid-bg overflow-hidden">
+
+  <!-- Glow orb -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(0,229,255,0.07) 0%,transparent 65%);"></div>
+
+  <!-- Satellite system (top-right) -->
+  <div class="absolute top-24 right-16 w-40 h-40 hidden lg:block" id="satellite-hub">
+    <!-- Orbit ring -->
+    <div class="absolute inset-0 border border-cyan/10 rounded-full"></div>
+    <!-- Signal waves -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+      <div class="w-20 h-20 border border-cyan/20 rounded-full absolute -top-10 -left-10 signal-expand" style="animation-delay:0s"></div>
+      <div class="w-32 h-32 border border-cyan/15 rounded-full absolute -top-16 -left-16 signal-expand" style="animation-delay:.8s"></div>
+      <div class="w-44 h-44 border border-cyan/10 rounded-full absolute -top-22 -left-22 signal-expand" style="animation-delay:1.6s"></div>
+    </div>
+    <!-- Satellite SVG orbiting -->
+    <div class="absolute top-1/2 left-1/2 orbit-path">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <rect x="11" y="8" width="10" height="16" rx="2" fill="#00e5ff" opacity=".9"/>
+        <rect x="2" y="12" width="28" height="8" rx="3" fill="#00bcd4" opacity=".8"/>
+        <circle cx="16" cy="16" r="3" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Badge -->
+  <div class="tag mb-8 opacity-0" id="hero-badge"><svg class="icon-svg" aria-hidden="true"><use href="#i-satellite"></use></svg> Conectividad · Innovación · Perú</div>
+
+  <!-- Headline -->
+  <div class="overflow-hidden mb-4">
+    <h1 class="font-display font-extrabold leading-none tracking-tight text-white" id="hero-h1"
+        style="font-size:clamp(3.2rem,9vw,8.5rem);line-height:.92;">
+      <span class="grad-text">WIFI</span><br/>
+      <span>A BORDO</span>
+    </h1>
+
+    <div class="hero-brand opacity-0" id="hero-brand">
+      <div class="hero-brand-name" id="pakda-name">PAKDA</div>
+      <div class="hero-brand-sat" id="hero-brand-sat" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="11" y="8" width="10" height="16" rx="2" fill="#1e5bbf" opacity=".95"/>
+          <rect x="2" y="12" width="28" height="8" rx="3" fill="#3a74cf" opacity=".85"/>
+          <circle cx="16" cy="16" r="3" fill="white"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <p class="font-body text-slate text-lg md:text-xl max-w-2xl leading-relaxed mt-6 opacity-0" id="hero-sub">
+    La primera plataforma de <strong class="text-white font-medium">hotspot inteligente</strong> para buses interprovinciales del Perú.<br/>
+    Pago automático. Activación instantánea. <strong class="text-cyan font-medium">Sin intervención humana.</strong>
+  </p>
+
+  <!-- CTA buttons -->
+  <div class="flex flex-col sm:flex-row items-center gap-4 mt-10 opacity-0" id="hero-ctas">
+    <a href="#contacto" class="bg-cyan text-ink font-display font-bold tracking-widest text-sm px-10 py-4 rounded-sm hover:bg-white transition-all duration-300 btn-glow">
+      QUIERO SER SOCIO
+    </a>
+    <a href="#como" class="border border-cyan/30 text-cyan font-display font-semibold tracking-widest text-sm px-10 py-4 rounded-sm hover:border-cyan hover:bg-cyan/5 transition-all duration-300">
+      VER DEMO →
+    </a>
+  </div>
+
+  <!-- Stats row -->
+  <div class="flex flex-wrap justify-center gap-0 mt-16 border border-cyan/15 rounded-sm divide-x divide-cyan/10 opacity-0" id="hero-stats">
+    <div class="px-8 py-5 text-center">
+      <div class="font-display font-extrabold text-3xl text-cyan" data-count="30" data-suffix="s">30s</div>
+      <div class="font-body text-xs text-slate tracking-widest uppercase mt-1">Activación</div>
+    </div>
+    <div class="px-8 py-5 text-center">
+      <div class="font-display font-extrabold text-3xl text-white">100%</div>
+      <div class="font-body text-xs text-slate tracking-widest uppercase mt-1">Automático</div>
+    </div>
+    <div class="px-8 py-5 text-center">
+      <div class="font-display font-extrabold text-3xl text-cyan">v2.0</div>
+      <div class="font-body text-xs text-slate tracking-widest uppercase mt-1">Probado</div>
+    </div>
+    <div class="px-8 py-5 text-center">
+      <div class="font-display font-extrabold text-3xl text-white">∞</div>
+      <div class="font-body text-xs text-slate tracking-widest uppercase mt-1">Escalable</div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+    <span class="font-body text-xs text-slate tracking-widest">SCROLL</span>
+    <div class="w-px h-12 bg-gradient-to-b from-cyan to-transparent scroll-dot"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ TICKER ═══════════════════════════════ -->
+<div class="border-y border-cyan/10 py-4 bg-panel/50 overflow-hidden" style="background:rgba(30,91,191,0.06)">
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <span class="repeat-text"></span>
+      <span class="repeat-text"></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ PROBLEMA ═══════════════════════════════ -->
+<section class="py-32 px-6 md:px-16 max-w-7xl mx-auto" id="solucion">
+  <div class="grid md:grid-cols-2 gap-16 items-center">
+
+    <div>
+      <div class="tag mb-6" data-aos="fade-right" data-aos-duration="800">El Desafío</div>
+      <h2 class="font-display font-extrabold leading-tight text-white mb-6" style="font-size:clamp(2.2rem,4vw,3.5rem);"
+          data-aos="fade-right" data-aos-delay="100">
+        El WiFi en buses era<br/><span class="grad-text">un problema sin resolver</span>
+      </h2>
+      <div class="space-y-5 font-body text-slate leading-relaxed">
+        <div class="flex gap-4 items-start glass-card p-4 rounded-sm" data-aos="fade-right" data-aos-delay="200">
+          <span class="text-2xl mt-0.5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-alert"></use></svg></span>
+          <div><strong class="text-white block">Gestión manual</strong>Conductores repartiendo contraseñas, sin control de acceso ni tiempo de uso.</div>
+        </div>
+        <div class="flex gap-4 items-start glass-card p-4 rounded-sm" data-aos="fade-right" data-aos-delay="300">
+          <span class="text-2xl mt-0.5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-coin"></use></svg></span>
+          <div><strong class="text-white block">WiFi gratis = pérdida</strong>Conexión ofrecida sin cobro como "beneficio", sin retorno para la empresa.</div>
+        </div>
+        <div class="flex gap-4 items-start glass-card p-4 rounded-sm" data-aos="fade-right" data-aos-delay="400">
+          <span class="text-2xl mt-0.5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-chart-down"></use></svg></span>
+          <div><strong class="text-white block">Sin datos ni reportes</strong>Imposible saber cuántos pasajeros se conectan, cuándo ni por cuánto tiempo.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Solution card -->
+    <div data-aos="fade-left" data-aos-duration="1000">
+      <div class="glass-card box-glow rounded-sm p-10 relative overflow-hidden scanline">
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan to-transparent" id="top-line-anim"></div>
+        <div class="tag mb-6">PAKDA · La Solución</div>
+        <h3 class="font-display font-extrabold text-2xl text-white mb-4">Sistema hotspot WiFi<br/><span class="grad-cyan">con pago integrado</span></h3>
+        <p class="font-body text-slate leading-relaxed mb-8">Plataforma 100% automatizada que convierte la conexión WiFi de tu flota en un servicio premium de valor agregado. El pasajero paga, se activa, navega. <strong class="text-white">Sin que nadie intervenga.</strong></p>
+        <div class="flex items-center gap-3">
+          <div class="w-2 h-2 rounded-full bg-cyan animate-pulse"></div>
+          <span class="font-body text-sm text-cyan">Sistema activo · v2.0 en producción</span>
+        </div>
+        <!-- Decorative circuit lines -->
+        <svg class="absolute bottom-0 right-0 opacity-10 pointer-events-none" width="200" height="200" viewBox="0 0 200 200">
+          <path d="M200 200 L140 200 L140 160 L100 160 L100 120 L60 120 L60 80 L20 80" stroke="#00e5ff" stroke-width="1" fill="none"/>
+          <path d="M200 150 L160 150 L160 110 L120 110" stroke="#00e5ff" stroke-width="1" fill="none"/>
+          <circle cx="140" cy="160" r="3" fill="#00e5ff"/>
+          <circle cx="100" cy="120" r="3" fill="#00e5ff"/>
+          <circle cx="60" cy="80" r="3" fill="#00e5ff"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ CÓMO FUNCIONA ═══════════════════════════════ -->
+<section id="como" class="py-28 px-6 md:px-16 relative" style="background:linear-gradient(to bottom, #f6faff, #eaf2ff, #f7fbff)">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-20">
+      <div class="tag mb-5" data-aos="fade-up">Proceso</div>
+      <h2 class="font-display font-extrabold text-white leading-tight" style="font-size:clamp(2.2rem,4vw,3.5rem);" data-aos="fade-up" data-aos-delay="100">
+        Activación en <span class="grad-text">30 segundos</span>
+      </h2>
+      <p class="font-body text-slate mt-4 max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="200">De cero a navegando en menos tiempo del que tarda abrir una app. Sin registro. Sin contraseñas. Sin esperas.</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+
+      <!-- Connector line desktop -->
+      <div class="absolute top-12 left-[12.5%] right-[12.5%] h-px bg-gradient-to-r from-cyan/30 via-cyan/60 to-cyan/30 hidden md:block" data-aos="scaleX" data-aos-duration="1200"></div>
+
+      <div class="glass-card rounded-sm p-8 text-center relative group" data-aos="fade-up" data-aos-delay="100">
+        <div class="w-12 h-12 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center mx-auto mb-5 text-cyan text-xl group-hover:bg-cyan/20 transition-all duration-300"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-wifi"></use></svg></div>
+        <div class="font-display font-extrabold text-4xl text-cyan/20 mb-2">01</div>
+        <h3 class="font-display font-bold text-white text-base mb-2">Conectar al WiFi</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Red abierta. Detectable desde cualquier smartphone, tablet o laptop.</p>
+      </div>
+
+      <div class="glass-card rounded-sm p-8 text-center relative group" data-aos="fade-up" data-aos-delay="200">
+        <div class="w-12 h-12 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center mx-auto mb-5 text-cyan text-xl group-hover:bg-cyan/20 transition-all duration-300"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-globe"></use></svg></div>
+        <div class="font-display font-extrabold text-4xl text-cyan/20 mb-2">02</div>
+        <h3 class="font-display font-bold text-white text-base mb-2">Portal Automático</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Redirección instantánea al portal de pago. Sin apps, sin descargas.</p>
+      </div>
+
+      <div class="glass-card rounded-sm p-8 text-center relative group" data-aos="fade-up" data-aos-delay="300">
+        <div class="w-12 h-12 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center mx-auto mb-5 text-cyan text-xl group-hover:bg-cyan/20 transition-all duration-300"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-card"></use></svg></div>
+        <div class="font-display font-extrabold text-4xl text-cyan/20 mb-2">03</div>
+        <h3 class="font-display font-bold text-white text-base mb-2">Pago Seguro</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Visa, Mastercard, Yape, Plin. Encriptado con SSL · PCI Compliant.</p>
+      </div>
+
+      <div class="glass-card rounded-sm p-8 text-center relative group" data-aos="fade-up" data-aos-delay="400">
+        <div class="w-12 h-12 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center mx-auto mb-5 text-cyan text-xl group-hover:bg-cyan/20 transition-all duration-300"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-rocket"></use></svg></div>
+        <div class="font-display font-extrabold text-4xl text-cyan/20 mb-2">04</div>
+        <h3 class="font-display font-bold text-white text-base mb-2">Navega al Instante</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Webhook activa el acceso en tiempo real. El pasajero está en línea.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ PERU MAP ═══════════════════════════════ -->
+<section id="mapa" class="py-28 px-6 md:px-16 relative overflow-hidden grid-bg">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+
+    <!-- Text left -->
+    <div>
+      <div class="tag mb-6" data-aos="fade-right">Todo el Peru Conectado</div>
+      <h2 class="font-display font-extrabold text-white leading-tight mb-6" style="font-size:clamp(2.2rem,4vw,3.5rem);" data-aos="fade-right" data-aos-delay="100">
+        Todo el Peru,<br/><span class="grad-cyan">100% conectado</span>
+      </h2>
+      <p class="font-body text-slate leading-relaxed mb-8" data-aos="fade-right" data-aos-delay="200">
+        PAKDA opera en cualquier ruta interprovincial del Peru. El sistema conecta toda la red nacional, por unidad y con gestion centralizada, sin importar la distancia ni el tramo.
+      </p>
+      <div class="space-y-3" data-aos="fade-right" data-aos-delay="300">
+        <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-cyan animate-pulse"></div><span class="font-body text-sm text-white">Costa · Sierra · Selva</span></div>
+        <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-gold animate-pulse" style="animation-delay:.5s"></div><span class="font-body text-sm text-white">Rutas cortas y de largo recorrido</span></div>
+        <div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-cyan animate-pulse" style="animation-delay:1s"></div><span class="font-body text-sm text-white">Escalable a toda la flota simultáneamente</span></div>
+      </div>
+    </div>
+
+    <!-- Peru Map Leaflet -->
+    <div class="relative w-full" data-aos="zoom-in" data-aos-duration="1000">
+      <div id="peru-map-leaflet"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ BENEFITS ═══════════════════════════════ -->
+<section id="beneficios" class="py-28 px-6 md:px-16" style="background:linear-gradient(180deg,#f8fbff 0%,#edf4ff 50%,#f8fbff 100%)">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-20">
+      <div class="tag mb-5" data-aos="fade-up">Para Empresas de Transporte</div>
+      <h2 class="font-display font-extrabold text-white leading-tight" style="font-size:clamp(2.2rem,4vw,3.5rem);" data-aos="fade-up" data-aos-delay="100">
+        Tu WiFi, convertido en<br/><span class="grad-text">servicio de valor agregado</span>
+      </h2>
+    </div>
+
+    <!-- Bus hero visual -->
+    <div class="relative flex justify-center mb-20" data-aos="zoom-in" data-aos-duration="1200">
+      <div class="relative float-anim">
+        <!-- Glow platform -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-6 rounded-full" style="background:radial-gradient(ellipse,rgba(0,229,255,0.3) 0%,transparent 70%);filter:blur(8px);"></div>
+        <!-- Bus SVG -->
+        <svg viewBox="0 0 560 180" class="w-full max-w-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <rect x="10" y="40" width="540" height="110" rx="18" fill="#0b1929" stroke="rgba(0,229,255,0.4)" stroke-width="1.5"/>
+          <!-- Upper stripe -->
+          <rect x="10" y="40" width="540" height="38" rx="18" fill="rgba(0,229,255,0.07)"/>
+          <rect x="10" y="40" width="540" height="38" rx="0" fill="rgba(0,229,255,0.04)" style="clip-path:inset(18px 0 0 0)"/>
+          <!-- Windows row -->
+          <rect x="70" y="50" width="68" height="24" rx="5" fill="rgba(0,229,255,0.25)" stroke="#00e5ff" stroke-width="1"/>
+          <rect x="152" y="50" width="68" height="24" rx="5" fill="rgba(0,229,255,0.25)" stroke="#00e5ff" stroke-width="1"/>
+          <rect x="234" y="50" width="68" height="24" rx="5" fill="rgba(0,229,255,0.25)" stroke="#00e5ff" stroke-width="1"/>
+          <rect x="316" y="50" width="68" height="24" rx="5" fill="rgba(0,229,255,0.25)" stroke="#00e5ff" stroke-width="1"/>
+          <rect x="398" y="50" width="68" height="24" rx="5" fill="rgba(0,229,255,0.25)" stroke="#00e5ff" stroke-width="1"/>
+          <!-- Door -->
+          <rect x="30" y="90" width="50" height="55" rx="4" fill="rgba(0,229,255,0.12)" stroke="rgba(0,229,255,0.3)" stroke-width="1"/>
+          <line x1="55" y1="90" x2="55" y2="145" stroke="rgba(0,229,255,0.2)" stroke-width="1"/>
+          <!-- Wheels -->
+          <circle cx="115" cy="155" r="22" fill="#060d19" stroke="rgba(0,229,255,0.35)" stroke-width="1.5"/>
+          <circle cx="115" cy="155" r="12" fill="#0b1929" stroke="rgba(0,229,255,0.25)" stroke-width="1.5"/>
+          <circle cx="115" cy="155" r="4" fill="#00e5ff" opacity=".6"/>
+          <circle cx="420" cy="155" r="22" fill="#060d19" stroke="rgba(0,229,255,0.35)" stroke-width="1.5"/>
+          <circle cx="420" cy="155" r="12" fill="#0b1929" stroke="rgba(0,229,255,0.25)" stroke-width="1.5"/>
+          <circle cx="420" cy="155" r="4" fill="#00e5ff" opacity=".6"/>
+          <!-- PAKDA lettering -->
+          <text x="210" y="120" fill="#00e5ff" font-size="28" font-family="Syne" font-weight="800" letter-spacing="8" opacity=".8">PAKDA</text>
+          <!-- WiFi on roof -->
+          <path d="M252 29c3-2.4 7-2.4 10 0" stroke="#00e5ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M249 26c4.8-3.6 10.2-3.6 15 0" stroke="#00e5ff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <circle cx="257" cy="31" r="1.5" fill="#00e5ff"/>
+          <!-- Headlights -->
+          <ellipse cx="548" cy="95" rx="8" ry="14" fill="rgba(255,255,180,0.4)"/>
+          <line x1="548" y1="85" x2="560" y2="75" stroke="rgba(255,255,180,0.25)" stroke-width="3"/>
+          <line x1="548" y1="95" x2="560" y2="95" stroke="rgba(255,255,180,0.25)" stroke-width="3"/>
+          <line x1="548" y1="105" x2="560" y2="115" stroke="rgba(255,255,180,0.25)" stroke-width="3"/>
+          <!-- Signal rings from bus -->
+          <circle cx="262" cy="20" r="14" stroke="rgba(0,229,255,0.5)" stroke-width="1.5" fill="none"><animate attributeName="r" values="10;24;10" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0;.6" dur="2.5s" repeatCount="indefinite"/></circle>
+          <circle cx="262" cy="20" r="30" stroke="rgba(0,229,255,0.25)" stroke-width="1" fill="none"><animate attributeName="r" values="20;45;20" dur="2.5s" begin=".6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2.5s" begin=".6s" repeatCount="indefinite"/></circle>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Benefits grid -->
+    <div class="grid md:grid-cols-3 gap-5">
+      <div class="glass-card box-glow p-8 rounded-sm group" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-3xl mb-5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-bolt"></use></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Cero Operación Manual</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Cobros, activaciones, desconexiones y reportes son totalmente automáticos. Tu equipo no toca nada.</p>
+        <div class="mt-5 pt-5 border-t border-cyan/10">
+          <span class="font-body text-xs text-cyan tracking-widest">SISTEMA AUTÓNOMO</span>
+        </div>
+      </div>
+
+      <div class="glass-card box-glow p-8 rounded-sm group" data-aos="fade-up" data-aos-delay="200">
+        <div class="text-3xl mb-5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-bars"></use></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Panel de Control Total</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Estadísticas de uso por unidad y ruta. Logs de sesión, auditoría completa, datos en tiempo real.</p>
+        <div class="mt-5 pt-5 border-t border-cyan/10">
+          <span class="font-body text-xs text-cyan tracking-widest">DATOS EN TIEMPO REAL</span>
+        </div>
+      </div>
+
+      <div class="glass-card box-glow p-8 rounded-sm group" data-aos="fade-up" data-aos-delay="300">
+        <div class="text-3xl mb-5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-shield"></use></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Seguridad Certificada</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">SSL en todo el flujo. Autenticación RADIUS. PCI Compliant. Tus datos y los de tus pasajeros, protegidos.</p>
+        <div class="mt-5 pt-5 border-t border-cyan/10">
+          <span class="font-body text-xs text-cyan tracking-widest">PCI · SSL · RADIUS</span>
+        </div>
+      </div>
+
+      <div class="glass-card box-glow p-8 rounded-sm group" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-3xl mb-5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-antenna"></use></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Escalable a Toda la Flota</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Desde una unidad piloto hasta cientos de buses. Cada unidad es independiente con gestión centralizada.</p>
+        <div class="mt-5 pt-5 border-t border-cyan/10">
+          <span class="font-body text-xs text-cyan tracking-widest">ARQUITECTURA DISTRIBUIDA</span>
+        </div>
+      </div>
+
+      <div class="glass-card box-glow p-8 rounded-sm group" data-aos="fade-up" data-aos-delay="200">
+        <div class="text-3xl mb-5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-sliders"></use></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Control de Ancho de Banda</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Perfiles configurables por plan. Timeout por inactividad. Desconexión automática al vencer el tiempo.</p>
+        <div class="mt-5 pt-5 border-t border-cyan/10">
+          <span class="font-body text-xs text-cyan tracking-widest">MIKROTIK · FREERADIUS</span>
+        </div>
+      </div>
+
+      <div class="glass-card box-glow p-8 rounded-sm group" data-aos="fade-up" data-aos-delay="300">
+        <div class="text-3xl mb-5 text-cyan"><svg class="icon-svg icon-xl" aria-hidden="true"><use href="#i-trophy"></use></svg></div>
+        <h3 class="font-display font-bold text-white text-lg mb-3">Imagen Premium</h3>
+        <p class="font-body text-slate text-sm leading-relaxed">Transforma cada viaje en una experiencia que tus pasajeros valoran y recomiendan. Diferénciate.</p>
+        <div class="mt-5 pt-5 border-t border-cyan/10">
+          <span class="font-body text-xs text-cyan tracking-widest">VALOR DE MARCA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ TECH STACK ═══════════════════════════════ -->
+<section class="py-20 px-6 md:px-16 border-y border-cyan/10" style="background:rgba(30,91,191,0.04)">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-14">
+      <div class="tag mb-4" data-aos="fade-up">Arquitectura</div>
+      <h2 class="font-display font-extrabold text-white text-2xl md:text-3xl" data-aos="fade-up" data-aos-delay="100">Tecnología probada y estable</h2>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="glass-card p-6 rounded-sm text-center group" data-aos="flip-up" data-aos-delay="100">
+        <div class="text-2xl mb-3 text-cyan"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-wrench"></use></svg></div>
+        <div class="font-display font-bold text-white text-sm">MikroTik</div>
+        <div class="font-body text-slate text-xs mt-1">Hotspot & Control</div>
+      </div>
+      <div class="glass-card p-6 rounded-sm text-center group" data-aos="flip-up" data-aos-delay="150">
+        <div class="text-2xl mb-3 text-cyan"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-server"></use></svg></div>
+        <div class="font-display font-bold text-white text-sm">VPS RADIUS</div>
+        <div class="font-body text-slate text-xs mt-1">Autenticación</div>
+      </div>
+      <div class="glass-card p-6 rounded-sm text-center group" data-aos="flip-up" data-aos-delay="200">
+        <div class="text-2xl mb-3 text-cyan"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-gear"></use></svg></div>
+        <div class="font-display font-bold text-white text-sm">FreeRADIUS</div>
+        <div class="font-body text-slate text-xs mt-1">Gestión de sesiones</div>
+      </div>
+      <div class="glass-card p-6 rounded-sm text-center group" data-aos="flip-up" data-aos-delay="250">
+        <div class="text-2xl mb-3 text-cyan"><svg class="icon-svg icon-lg" aria-hidden="true"><use href="#i-link"></use></svg></div>
+        <div class="font-display font-bold text-white text-sm">Webhook RT</div>
+        <div class="font-body text-slate text-xs mt-1">Activación instantánea</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ PAYMENTS ═══════════════════════════════ -->
+<section class="py-24 px-6 md:px-16">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="tag mb-5" data-aos="fade-up">Medios de Pago</div>
+    <h2 class="font-display font-extrabold text-white text-2xl md:text-3xl mb-4" data-aos="fade-up" data-aos-delay="100">
+      Todos los pagos que el Perú usa
+    </h2>
+    <p class="font-body text-slate mb-12 max-w-lg mx-auto" data-aos="fade-up" data-aos-delay="200">Integración nativa con las pasarelas más usadas del mercado. Sin fricción para el pasajero.</p>
+
+    <div class="flex flex-wrap justify-center gap-4" data-aos="fade-up" data-aos-delay="300">
+      <div class="pay-chip border border-cyan/20 rounded-sm px-6 py-3 font-display font-bold text-sm text-cyan tracking-widest">VISA</div>
+      <div class="pay-chip border border-cyan/20 rounded-sm px-6 py-3 font-display font-bold text-sm text-white tracking-widest">MASTERCARD</div>
+      <div class="pay-chip border border-cyan/20 rounded-sm px-6 py-3 font-display font-bold text-sm text-cyan tracking-widest">AMEX</div>
+      <div class="pay-chip border border-purple-400/30 rounded-sm px-6 py-3 font-display font-bold text-sm tracking-widest" style="color:#a855f7">YAPE</div>
+      <div class="pay-chip border border-blue-400/30 rounded-sm px-6 py-3 font-display font-bold text-sm tracking-widest" style="color:#60a5fa">PLIN</div>
+      <div class="pay-chip border border-green-400/30 rounded-sm px-6 py-3 font-display font-bold text-sm tracking-widest" style="color:#4ade80"><svg class="icon-svg" aria-hidden="true"><use href="#i-lock"></use></svg> SSL · PCI</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ CTA ═══════════════════════════════ -->
+<section id="contacto" class="py-32 px-6 md:px-16 relative overflow-hidden grid-bg">
+  <!-- Background radial -->
+  <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse at 50% 50%,rgba(30,91,191,0.14) 0%,transparent 65%)"></div>
+
+  <div class="max-w-2xl mx-auto text-center relative z-10">
+    <div class="tag mb-6" data-aos="fade-up">¿Listo para comenzar?</div>
+    <h2 class="font-display font-extrabold text-white leading-tight mb-6" style="font-size:clamp(2.5rem,5vw,4.5rem);" data-aos="fade-up" data-aos-delay="100">
+      Convierte tu flota en una<br/><span class="grad-text">experiencia conectada</span>
+    </h2>
+    <p class="font-body text-slate text-lg leading-relaxed mb-12" data-aos="fade-up" data-aos-delay="200">
+      Hablemos hoy. Exploramos cómo PAKDA puede potenciar el valor de tu servicio, fortalecer tu marca y generar un nuevo flujo de ingresos automático para tu empresa.
+    </p>
+
+    <!-- Contact form -->
+    <div class="glass-card box-glow p-10 rounded-sm" data-aos="fade-up" data-aos-delay="300">
+      <div class="flex flex-col gap-4">
+        <input id="cf-name" type="text" placeholder="Nombre o empresa de transporte"
+          class="bg-white/5 border border-cyan/20 rounded-sm px-5 py-4 text-white placeholder-slate font-body text-sm outline-none focus:border-cyan transition-colors duration-300 w-full"/>
+        <input id="cf-phone" type="tel" placeholder="WhatsApp / Teléfono"
+          class="bg-white/5 border border-cyan/20 rounded-sm px-5 py-4 text-white placeholder-slate font-body text-sm outline-none focus:border-cyan transition-colors duration-300 w-full"/>
+        <button onclick="sendWA()" class="bg-cyan text-ink font-display font-extrabold tracking-widest text-sm py-4 rounded-sm hover:bg-white transition-all duration-300 btn-glow">
+          HABLAR CON EL EQUIPO →
+        </button>
+      </div>
+      <p class="font-body text-slate text-xs mt-5 text-center">O visítanos en <a href="https://pakda.com.pe" class="text-cyan hover:underline">pakda.com.pe</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer class="border-t border-cyan/10 px-6 md:px-16 py-10 flex flex-col md:flex-row items-center justify-between gap-6" style="background:rgba(255,255,255,0.82)">
+  <div class="font-display font-extrabold text-xl tracking-widest grad-cyan">PAKDA</div>
+  <div class="flex flex-wrap justify-center gap-6">
+    <a href="#" class="font-body text-slate text-xs hover:text-cyan transition-colors">Términos de Uso</a>
+    <a href="#" class="font-body text-slate text-xs hover:text-cyan transition-colors">Política de Privacidad</a>
+    <a href="#" class="font-body text-slate text-xs hover:text-cyan transition-colors">Libro de Reclamaciones</a>
+  </div>
+  <p class="font-body text-slate text-xs">© 2026 PAKDA · Lima, Perú</p>
+</footer>
+
+<section class="px-6 md:px-16 pb-14" style="background:rgba(255,255,255,0.82)">
+  <div class="max-w-6xl mx-auto rounded-sm border border-cyan/20 p-4 md:p-5">
+    <p class="font-body text-[11px] uppercase tracking-[0.14em] text-slate mb-3">Cambiar version</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <a href="./pakda-landing-v2.html" class="bg-cyan text-ink font-display font-bold text-xs tracking-[0.08em] py-3 text-center rounded-sm">Ver V2</a>
+      <a href="./pakda-landing-v3.html" class="border border-cyan/35 text-cyan font-display font-bold text-xs tracking-[0.08em] py-3 text-center rounded-sm hover:bg-cyan/10 transition-colors">Ver V3</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
+<script>
+// ── CURSOR ──────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+});
+
+function lerpCursor(){
+  rx += (mx-rx)*.13; ry += (my-ry)*.13;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(lerpCursor);
+}
+lerpCursor();
+
+document.querySelectorAll('a,button,input').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='18px'; cursor.style.height='18px'; ring.style.width='56px'; ring.style.height='56px'; ring.style.borderColor='rgba(30,91,191,0.78)'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='38px'; ring.style.height='38px'; ring.style.borderColor='rgba(30,91,191,0.45)'; });
+});
+
+// ── THREE.JS PARTICLE BG ─────────────────────────────────
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+
+  // Particles
+  const count = 900;
+  const geo = new THREE.BufferGeometry();
+  const positions = new Float32Array(count*3);
+  const colors = new Float32Array(count*3);
+
+  for(let i=0;i<count;i++){
+    positions[i*3]   = (Math.random()-.5)*22;
+    positions[i*3+1] = (Math.random()-.5)*22;
+    positions[i*3+2] = (Math.random()-.5)*22;
+    // Palette tuned for white background
+    const r = Math.random();
+    if(r < .65){ colors[i*3]=0.12; colors[i*3+1]=0.35; colors[i*3+2]=0.75; }
+    else if(r < .9){ colors[i*3]=0.3; colors[i*3+1]=0.52; colors[i*3+2]=0.87; }
+    else { colors[i*3]=0.75; colors[i*3+1]=0.83; colors[i*3+2]=0.98; }
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors,3));
+
+  const mat = new THREE.PointsMaterial({ size:.03, vertexColors:true, transparent:true, opacity:.32 });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+
+  // Connection lines (sparse)
+  const lineMat = new THREE.LineBasicMaterial({color:0x1e5bbf, opacity:.08, transparent:true});
+  for(let i=0;i<30;i++){
+    const lGeo = new THREE.BufferGeometry();
+    const a = Math.floor(Math.random()*count);
+    const b = Math.floor(Math.random()*count);
+    const pts = [
+      new THREE.Vector3(positions[a*3], positions[a*3+1], positions[a*3+2]),
+      new THREE.Vector3(positions[b*3], positions[b*3+1], positions[b*3+2])
+    ];
+    lGeo.setFromPoints(pts);
+    scene.add(new THREE.Line(lGeo, lineMat));
+  }
+
+  let mouseX=0, mouseY=0;
+  document.addEventListener('mousemove', e => {
+    mouseX = (e.clientX/window.innerWidth-.5)*2;
+    mouseY = -(e.clientY/window.innerHeight-.5)*2;
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    points.rotation.y += .0002;
+    points.rotation.x += .0001;
+    camera.position.x += (mouseX*.35 - camera.position.x)*.016;
+    camera.position.y += (mouseY*.22 - camera.position.y)*.016;
+    camera.lookAt(scene.position);
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+})();
+
+// ── GSAP ──────────────────────────────────────────────────
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero entrance
+gsap.timeline({delay:.3})
+  .to('#hero-badge',   { opacity:1, y:0, duration:.6, ease:'power3.out' })
+  .to('#hero-h1',      { opacity:1, y:0, duration:.8, ease:'power3.out' }, '-=.2')
+  .to('#hero-brand',   { opacity:1, y:0, duration:.7, ease:'power3.out' }, '-=.4')
+  .to('#hero-sub',     { opacity:1, y:0, duration:.7, ease:'power3.out' }, '-=.4')
+  .to('#hero-ctas',    { opacity:1, y:0, duration:.6, ease:'power3.out' }, '-=.3')
+  .to('#hero-stats',   { opacity:1, y:0, duration:.6, ease:'power3.out' }, '-=.2');
+
+// Hero init positions
+gsap.set(['#hero-h1','#hero-brand','#hero-sub','#hero-ctas','#hero-stats'], { opacity:0, y:40 });
+
+const pakdaName = document.getElementById('pakda-name');
+if (pakdaName) {
+  pakdaName.innerHTML = pakdaName.textContent
+    .split('')
+    .map(letter => `<span class="pakda-letter">${letter}</span>`)
+    .join('');
+
+  gsap.to('.pakda-letter', {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    duration: 0.55,
+    ease: 'back.out(1.6)',
+    stagger: 0.08,
+    delay: 0.7
+  });
+}
+
+gsap.to('#hero-brand-sat', {
+  y: -8,
+  x: 5,
+  rotation: 12,
+  duration: 2,
+  repeat: -1,
+  yoyo: true,
+  ease: 'sine.inOut'
+});
+
+const MAP_W = 360;
+const MAP_H = 520;
+const MAP_PAD = 14;
+
+let projectedDepartments = {};
+
+function flattenLonLat(geom){
+  const points = [];
+  if(!geom) return points;
+
+  if(geom.type === 'Polygon'){
+    geom.coordinates.forEach(ring => {
+      ring.forEach(p => points.push(p));
+    });
+  }
+  if(geom.type === 'MultiPolygon'){
+    geom.coordinates.forEach(poly => {
+      poly.forEach(ring => {
+        ring.forEach(p => points.push(p));
+      });
+    });
+  }
+  return points;
+}
+
+function geometryToPath(geom, project){
+  const rings = [];
+
+  if(geom.type === 'Polygon'){
+    geom.coordinates.forEach(ring => rings.push(ring));
+  }
+  if(geom.type === 'MultiPolygon'){
+    geom.coordinates.forEach(poly => {
+      poly.forEach(ring => rings.push(ring));
+    });
+  }
+
+  return rings.map(ring => {
+    return ring.map((coord, i) => {
+      const [x, y] = project(coord[0], coord[1]);
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`;
+    }).join(' ') + ' Z';
+  }).join(' ');
+}
+
+function centroidFromGeometry(geom){
+  const points = flattenLonLat(geom);
+  if(points.length === 0) return null;
+
+  let sx = 0;
+  let sy = 0;
+  points.forEach(([lon, lat]) => {
+    sx += lon;
+    sy += lat;
+  });
+
+  return [sx / points.length, sy / points.length];
+}
+
+function shortDeptName(name){
+  const map = {
+    'MADRE DE DIOS':'M. DE DIOS',
+    'LA LIBERTAD':'LA LIBERTAD',
+    'SAN MARTIN':'SAN MARTIN'
+  };
+  return map[name] || name;
+}
+
+function renderFallbackMap(depsG, linesG, pointsG, routesG, centerG){
+  depsG.innerHTML = '';
+  linesG.innerHTML = '';
+  pointsG.innerHTML = '';
+  routesG.innerHTML = '';
+  centerG.innerHTML = '';
+
+  const fallbackPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  fallbackPath.setAttribute('d', 'M102 16 L140 11 L180 16 L206 22 L228 20 L246 30 L262 40 L278 59 L286 78 L281 95 L294 112 L296 132 L304 154 L312 170 L315 192 L312 214 L304 232 L289 246 L284 268 L274 286 L263 302 L256 321 L246 338 L236 358 L224 379 L213 401 L202 425 L188 448 L174 466 L158 471 L146 461 L135 445 L124 422 L114 401 L102 374 L91 347 L84 321 L78 292 L68 267 L62 244 L55 214 L53 193 L56 170 L61 148 L64 129 L60 109 L64 89 L73 69 L82 50 L93 32 Z');
+  fallbackPath.setAttribute('fill', 'url(#peruFill)');
+  fallbackPath.setAttribute('stroke', 'rgba(30,91,191,0.62)');
+  fallbackPath.setAttribute('stroke-width', '1.7');
+  fallbackPath.setAttribute('class', 'dept-path');
+  depsG.appendChild(fallbackPath);
+
+  projectedDepartments = {
+    TUMBES:{x:167,y:33}, PIURA:{x:161,y:70}, LAMBAYEQUE:{x:156,y:109}, 'LA LIBERTAD':{x:152,y:142},
+    ANCASH:{x:151,y:176}, LIMA:{x:156,y:290}, ICA:{x:166,y:350}, AREQUIPA:{x:177,y:406},
+    MOQUEGUA:{x:180,y:432}, TACNA:{x:184,y:458}, JUNIN:{x:192,y:238}, HUANUCO:{x:176,y:214},
+    'SAN MARTIN':{x:226,y:175}, LORETO:{x:248,y:174}, HUANCAVELICA:{x:170,y:320}, AYACUCHO:{x:184,y:334},
+    APURIMAC:{x:196,y:347}, CUSCO:{x:204,y:338}, PUNO:{x:236,y:360}, PASCO:{x:186,y:210}, UCAYALI:{x:230,y:242},
+    'MADRE DE DIOS':{x:236,y:360}
+  };
+
+  const lima = projectedDepartments.LIMA;
+  centerG.innerHTML = `
+    <circle cx="${lima.x}" cy="${lima.y}" r="8.4" fill="#1e5bbf" filter="url(#dotGlow)">
+      <animate attributeName="r" values="7.5;11;7.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${lima.x}" cy="${lima.y}" r="18" stroke="rgba(30,91,191,0.35)" fill="none">
+      <animate attributeName="r" values="14;24;14" dur="2.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".65;0;.65" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <text class="map-label" x="${lima.x + 10}" y="${lima.y + 6}" style="font-size:10px;font-weight:800;">LIMA HUB</text>
+  `;
+
+  Object.keys(projectedDepartments).forEach((name, i) => {
+    const pt = projectedDepartments[name];
+    if(name !== 'LIMA'){
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', lima.x);
+      line.setAttribute('y1', lima.y);
+      line.setAttribute('x2', pt.x);
+      line.setAttribute('y2', pt.y);
+      line.setAttribute('class', 'network-ray');
+      line.style.animationDelay = `${(i % 8) * 0.22}s`;
+      linesG.appendChild(line);
+    }
+
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', pt.x);
+    dot.setAttribute('cy', pt.y);
+    dot.setAttribute('r', name === 'LIMA' ? '4.5' : '3.2');
+    dot.setAttribute('class', 'province-dot');
+    dot.setAttribute('fill', name === 'LIMA' ? '#1e5bbf' : '#2f6cc9');
+    dot.setAttribute('filter', 'url(#dotGlow)');
+    pointsG.appendChild(dot);
+  });
+
+  const routeDefs = [
+    ['TUMBES','PIURA','LAMBAYEQUE','LA LIBERTAD','ANCASH','LIMA','ICA','AREQUIPA','MOQUEGUA','TACNA'],
+    ['LIMA','JUNIN','HUANUCO','SAN MARTIN','LORETO'],
+    ['LIMA','HUANCAVELICA','AYACUCHO','APURIMAC','CUSCO','PUNO'],
+    ['LIMA','JUNIN','PASCO','UCAYALI','MADRE DE DIOS']
+  ];
+
+  const mapRoutes = {};
+  routeDefs.forEach((namesRoute, idx) => {
+    const pts = namesRoute
+      .map(name => projectedDepartments[name])
+      .filter(Boolean)
+      .map(p => ({ x: p.x, y: p.y }));
+    if(pts.length < 2) return;
+
+    const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`).join(' ');
+    const routePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    routePath.setAttribute('d', d);
+    routePath.setAttribute('class', 'route-path');
+    routePath.setAttribute('fill', 'none');
+    routePath.setAttribute('stroke-linecap', 'round');
+    routePath.setAttribute('stroke-width', idx === 0 ? '2.2' : '1.9');
+    routePath.setAttribute('stroke', idx === 0 ? 'rgba(30,91,191,0.65)' : 'rgba(30,91,191,0.45)');
+    routesG.appendChild(routePath);
+    mapRoutes[`r${idx + 1}`] = pts;
+  });
+
+  ScrollTrigger.create({
+    trigger:'#peru-map',
+    start:'top 70%',
+    onEnter: () => {
+      gsap.to('#peru-map .route-path', {
+        strokeDashoffset:0,
+        duration:2.4,
+        stagger:0.25,
+        ease:'power2.inOut'
+      });
+    }
+  });
+
+  let mapBusesStarted = false;
+  ScrollTrigger.create({
+    trigger:'#mapa',
+    start:'top 60%',
+    once:false,
+    onEnter: () => {
+      if(mapBusesStarted) return;
+      startBusLoop('bus-gsap-1', mapRoutes.r1 || [], 0.65, 0);
+      startBusLoop('bus-gsap-2', mapRoutes.r2 || [], 0.62, 0.7);
+      startBusLoop('bus-gsap-3', mapRoutes.r3 || [], 0.6, 1.2);
+      startBusLoop('bus-gsap-4', mapRoutes.r4 || [], 0.58, 1.6);
+      mapBusesStarted = true;
+    }
+  });
+}
+
+async function renderGeoPeruMap(){
+  const svg = document.getElementById('peru-map');
+  if(!svg) return;
+
+  const depsG = document.getElementById('geo-departments');
+  const linesG = document.getElementById('geo-network-lines');
+  const pointsG = document.getElementById('geo-points');
+  const routesG = document.getElementById('geo-routes');
+  const centerG = document.getElementById('network-center');
+  if(!depsG || !linesG || !pointsG || !routesG || !centerG) return;
+
+  let geojson;
+  try {
+    const res = await fetch('./peru_departamental_simple.geojson');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    geojson = await res.json();
+  } catch (error) {
+    console.warn('No se pudo cargar peru_departamental_simple.geojson', error);
+    renderFallbackMap(depsG, linesG, pointsG, routesG, centerG);
+    return;
+  }
+
+  const features = (geojson.features || []).filter(f => f?.geometry);
+  if(features.length === 0) {
+    renderFallbackMap(depsG, linesG, pointsG, routesG, centerG);
+    return;
+  }
+
+  const allPoints = features.flatMap(f => flattenLonLat(f.geometry));
+  let minLon = Infinity;
+  let maxLon = -Infinity;
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+
+  allPoints.forEach(([lon, lat]) => {
+    minLon = Math.min(minLon, lon);
+    maxLon = Math.max(maxLon, lon);
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+  });
+
+  const spanLon = maxLon - minLon;
+  const spanLat = maxLat - minLat;
+
+  const project = (lon, lat) => {
+    const x = MAP_PAD + ((lon - minLon) / spanLon) * (MAP_W - MAP_PAD * 2);
+    const y = MAP_H - MAP_PAD - ((lat - minLat) / spanLat) * (MAP_H - MAP_PAD * 2);
+    return [x, y];
+  };
+
+  depsG.innerHTML = '';
+  linesG.innerHTML = '';
+  pointsG.innerHTML = '';
+  routesG.innerHTML = '';
+  centerG.innerHTML = '';
+  projectedDepartments = {};
+
+  features.forEach((feature, idx) => {
+    const dept = feature.properties?.NOMBDEP || `DEP-${idx}`;
+    const d = geometryToPath(feature.geometry, project);
+    const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pathEl.setAttribute('d', d);
+    pathEl.setAttribute('class', 'dept-path');
+    depsG.appendChild(pathEl);
+
+    const c = centroidFromGeometry(feature.geometry);
+    if(c){
+      const [cx, cy] = project(c[0], c[1]);
+      projectedDepartments[dept] = { x: cx, y: cy };
+    }
+  });
+
+  const lima = projectedDepartments.LIMA;
+  if(!lima) {
+    renderFallbackMap(depsG, linesG, pointsG, routesG, centerG);
+    return;
+  }
+
+  const hubPulse = `
+    <circle cx="${lima.x.toFixed(2)}" cy="${lima.y.toFixed(2)}" r="8.4" fill="#1e5bbf" filter="url(#dotGlow)">
+      <animate attributeName="r" values="7.5;11;7.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${lima.x.toFixed(2)}" cy="${lima.y.toFixed(2)}" r="18" stroke="rgba(30,91,191,0.35)" fill="none">
+      <animate attributeName="r" values="14;24;14" dur="2.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".65;0;.65" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <text class="map-label" x="${(lima.x + 10).toFixed(2)}" y="${(lima.y + 6).toFixed(2)}" style="font-size:10px;font-weight:800;">LIMA HUB</text>
+  `;
+  centerG.innerHTML = hubPulse;
+
+  const names = Object.keys(projectedDepartments);
+  names.forEach((name, i) => {
+    const pt = projectedDepartments[name];
+    if(name !== 'LIMA'){
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', lima.x.toFixed(2));
+      line.setAttribute('y1', lima.y.toFixed(2));
+      line.setAttribute('x2', pt.x.toFixed(2));
+      line.setAttribute('y2', pt.y.toFixed(2));
+      line.setAttribute('class', 'network-ray');
+      line.style.animationDelay = `${(i % 8) * 0.22}s`;
+      linesG.appendChild(line);
+    }
+
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', pt.x.toFixed(2));
+    dot.setAttribute('cy', pt.y.toFixed(2));
+    dot.setAttribute('r', name === 'LIMA' ? '4.5' : '3.2');
+    dot.setAttribute('class', 'province-dot');
+    dot.setAttribute('fill', name === 'LIMA' ? '#1e5bbf' : '#2f6cc9');
+    dot.setAttribute('filter', 'url(#dotGlow)');
+    pointsG.appendChild(dot);
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', (pt.x + 6).toFixed(2));
+    label.setAttribute('y', (pt.y + 2.5).toFixed(2));
+    label.setAttribute('class', 'map-label');
+    label.textContent = shortDeptName(name);
+    pointsG.appendChild(label);
+  });
+
+  const routeDefs = [
+    ['TUMBES','PIURA','LAMBAYEQUE','LA LIBERTAD','ANCASH','LIMA','ICA','AREQUIPA','MOQUEGUA','TACNA'],
+    ['LIMA','JUNIN','HUANUCO','SAN MARTIN','LORETO'],
+    ['LIMA','HUANCAVELICA','AYACUCHO','APURIMAC','CUSCO','PUNO'],
+    ['LIMA','JUNIN','PASCO','UCAYALI','MADRE DE DIOS']
+  ];
+
+  const mapRoutes = {};
+  routeDefs.forEach((namesRoute, idx) => {
+    const pts = namesRoute
+      .map(name => projectedDepartments[name])
+      .filter(Boolean)
+      .map(p => ({ x: p.x, y: p.y }));
+    if(pts.length < 2) return;
+
+    const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+    const routePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    routePath.setAttribute('d', d);
+    routePath.setAttribute('class', 'route-path');
+    routePath.setAttribute('fill', 'none');
+    routePath.setAttribute('stroke-linecap', 'round');
+    routePath.setAttribute('stroke-width', idx === 0 ? '2.2' : '1.9');
+    routePath.setAttribute('stroke', idx === 0 ? 'rgba(30,91,191,0.65)' : 'rgba(30,91,191,0.45)');
+    routesG.appendChild(routePath);
+
+    mapRoutes[`r${idx + 1}`] = pts;
+  });
+
+  ScrollTrigger.create({
+    trigger:'#peru-map',
+    start:'top 70%',
+    onEnter: () => {
+      gsap.to('#peru-map .route-path', {
+        strokeDashoffset:0,
+        duration:2.4,
+        stagger:0.25,
+        ease:'power2.inOut'
+      });
+    }
+  });
+
+  let mapBusesStarted = false;
+  ScrollTrigger.create({
+    trigger:'#mapa',
+    start:'top 60%',
+    once:false,
+    onEnter: () => {
+      if(mapBusesStarted) return;
+      startBusLoop('bus-gsap-1', mapRoutes.r1 || [], 0.65, 0);
+      startBusLoop('bus-gsap-2', mapRoutes.r2 || [], 0.62, 0.7);
+      startBusLoop('bus-gsap-3', mapRoutes.r3 || [], 0.6, 1.2);
+      startBusLoop('bus-gsap-4', mapRoutes.r4 || [], 0.58, 1.6);
+      mapBusesStarted = true;
+    }
+  });
+}
+
+// Multiple buses moving through different Peru routes
+function startBusLoop(busId, route, stepDuration, startDelay){
+  const bus = document.getElementById(busId);
+  if(!bus || !Array.isArray(route) || route.length === 0) return;
+
+  let idx = 0;
+  const drive = () => {
+    if(idx >= route.length) idx = 0;
+    const pt = route[idx];
+    gsap.to(bus, {
+      attr:{ transform:`translate(${pt.x},${pt.y}) rotate(${pt.r || 0})` },
+      duration: stepDuration,
+      ease:'none',
+      onComplete: drive
+    });
+    idx++;
+  };
+
+  gsap.delayedCall(startDelay, () => {
+    gsap.set(bus, { attr:{ transform:`translate(${route[0].x},${route[0].y}) rotate(${route[0].r || 0})` } });
+    drive();
+  });
+}
+
+renderGeoPeruMap();
+
+async function initPeruLeafletMap(){
+  const mapEl = document.getElementById('peru-map-leaflet');
+  if(!mapEl || typeof L === 'undefined') return;
+
+  const map = L.map(mapEl, {
+    zoomControl: true,
+    scrollWheelZoom: false,
+    attributionControl: true
+  }).setView([-9.4, -75.2], 5);
+
+  const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd',
+    attribution: '&copy; OpenStreetMap contributors, &copy; CARTO'
+  });
+
+  const esriTiles = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18,
+    attribution: 'Tiles &copy; Esri'
+  });
+
+  cartoTiles.on('tileerror', () => {
+    if (map.hasLayer(cartoTiles)) {
+      map.removeLayer(cartoTiles);
+      esriTiles.addTo(map);
+    }
+  });
+
+  cartoTiles.addTo(map);
+
+  let geojson;
+  try {
+    const res = await fetch('./peru_departamental_simple.geojson');
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    geojson = await res.json();
+  } catch (err) {
+    console.warn('No se pudo cargar el GeoJSON en Leaflet', err);
+    return;
+  }
+
+  const layer = L.geoJSON(geojson, {
+    style: {
+      color: '#4f7096',
+      weight: 1,
+      fillColor: '#7ca2b7',
+      fillOpacity: 0.45
+    }
+  }).addTo(map);
+
+  const bounds = layer.getBounds();
+  if(bounds.isValid()){
+    map.fitBounds(bounds, { padding: [10, 10] });
+  }
+
+  const hubs = {
+    LIMA: [-12.0464, -77.0428],
+    TUMBES: [-3.5669, -80.4515],
+    PIURA: [-5.1945, -80.6328],
+    TRUJILLO: [-8.1091, -79.0215],
+    IQUITOS: [-3.7437, -73.2516],
+    CUSCO: [-13.5319, -71.9675],
+    AREQUIPA: [-16.409, -71.5375],
+    TACNA: [-18.0146, -70.2536]
+  };
+
+  const lima = hubs.LIMA;
+  L.circleMarker(lima, {
+    radius: 9,
+    color: '#1e5bbf',
+    weight: 2,
+    fillColor: '#1e5bbf',
+    fillOpacity: 0.85
+  }).addTo(map).bindTooltip('LIMA HUB', { permanent: true, direction: 'right', offset: [10, 0] });
+
+  Object.keys(hubs).forEach((name, i) => {
+    if(name === 'LIMA') return;
+    const to = hubs[name];
+
+    L.polyline([lima, to], {
+      color: '#4f7096',
+      weight: 1.4,
+      dashArray: '5 8',
+      opacity: 0.7
+    }).addTo(map);
+
+    L.circleMarker(to, {
+      radius: 5,
+      color: '#2f6cc9',
+      weight: 1,
+      fillColor: '#2f6cc9',
+      fillOpacity: 0.85
+    }).addTo(map).bindTooltip(name, { permanent: true, direction: 'top', offset: [0, -7] });
+  });
+
+  const routes = [
+    [hubs.TUMBES, hubs.PIURA, hubs.TRUJILLO, hubs.LIMA, hubs.AREQUIPA, hubs.TACNA],
+    [hubs.LIMA, [-11.5, -75.2], [-8.9, -74.5], hubs.IQUITOS],
+    [hubs.LIMA, [-13.6, -74.3], hubs.CUSCO, [-15.9, -69.9]],
+    [hubs.LIMA, [-11.8, -75.6], [-10.7, -74.9], [-12.6, -69.2]]
+  ];
+
+  routes.forEach((route, idx) => {
+    L.polyline(route, {
+      color: idx === 0 ? '#1e5bbf' : '#3b6db8',
+      weight: idx === 0 ? 2.4 : 1.9,
+      opacity: 0.9
+    }).addTo(map);
+  });
+
+  const busIcon = L.divIcon({
+    className: 'bus-marker',
+    html: '<svg viewBox="0 0 24 24" width="18" height="18" style="display:block;stroke:#1e5bbf;fill:#e8f1ff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="4" y="5" width="16" height="12" rx="2"></rect><path d="M4 10h16"></path><path d="M7 17v2M17 17v2"></path><circle cx="8" cy="18" r="1.4" fill="#1e5bbf" stroke="none"></circle><circle cx="16" cy="18" r="1.4" fill="#1e5bbf" stroke="none"></circle></svg>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+  });
+
+  function animateBus(route, delayMs){
+    if(!route || route.length < 2) return;
+    const marker = L.marker(route[0], { icon: busIcon }).addTo(map);
+
+    let seg = 0;
+    let t = 0;
+    const speed = 0.015;
+
+    setTimeout(() => {
+      setInterval(() => {
+        const a = route[seg];
+        const b = route[seg + 1];
+        if(!a || !b) return;
+
+        t += speed;
+        if(t >= 1){
+          t = 0;
+          seg += 1;
+          if(seg >= route.length - 1) seg = 0;
+        }
+
+        const lat = a[0] + (b[0] - a[0]) * t;
+        const lng = a[1] + (b[1] - a[1]) * t;
+        marker.setLatLng([lat, lng]);
+      }, 80);
+    }, delayMs);
+  }
+
+  animateBus(routes[0], 0);
+  animateBus(routes[1], 700);
+  animateBus(routes[2], 1200);
+  animateBus(routes[3], 1800);
+}
+
+initPeruLeafletMap();
+
+// Parallax sections
+gsap.utils.toArray('section').forEach(sec => {
+  gsap.fromTo(sec.querySelector('.tag'), { opacity:0, y:20 }, {
+    opacity:1, y:0, duration:.6,
+    scrollTrigger:{ trigger:sec, start:'top 80%', toggleActions:'play none none reverse' }
+  });
+});
+
+// Ticker content
+const tickerItems = ['WiFi a Bordo', 'Pago Automático', 'Activación Instantánea', 'Control Total', 'Más Rutas Conectadas', 'Tecnología RADIUS', 'Certificado SSL', 'Flota Conectada', '100% Automatizado'];
+const tickerInners = document.querySelectorAll('.ticker-inner');
+tickerInners.forEach(t => {
+  t.innerHTML = tickerItems.map(i => `<span class="font-display font-bold text-sm tracking-widest px-8 text-slate/60" style="white-space:nowrap">${i} <span class="text-cyan mx-4">·</span></span>`).join('') +
+                tickerItems.map(i => `<span class="font-display font-bold text-sm tracking-widest px-8 text-slate/60" style="white-space:nowrap">${i} <span class="text-cyan mx-4">·</span></span>`).join('');
+});
+
+// WhatsApp CTA
+function sendWA(){
+  const n = document.getElementById('cf-name').value || 'interesado';
+  const p = document.getElementById('cf-phone').value || '';
+  const m = encodeURIComponent(`Hola equipo PAKDA\nSoy ${n}. Me interesa conocer mas sobre el sistema de WiFi a bordo para mi empresa de transporte.\nContacto: ${p}`);
+  window.open(`https://wa.me/51999999999?text=${m}`, '_blank');
+}
+
+// AOS init
+AOS.init({ duration:900, once:true, easing:'ease-out-cubic', offset:60 });
+</script>
+
+</body>
+</html>

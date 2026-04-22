@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "pakda-landing-v2.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "pakda-landing-v3.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/pakda-landing-v2.html"
+    }
+  ]
+}
