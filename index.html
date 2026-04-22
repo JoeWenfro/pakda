@@ -245,14 +245,6 @@
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.28));
   }
 
-  .peru-neon-glow {
-    filter: drop-shadow(0 0 8px rgba(31, 208, 255, 0.85)) drop-shadow(0 0 16px rgba(79, 140, 255, 0.65));
-  }
-
-  .peru-neon-core {
-    filter: drop-shadow(0 0 4px rgba(31, 208, 255, 0.95));
-  }
-
   .appear {
     opacity: 0;
     transform: translateY(26px);
@@ -593,11 +585,29 @@
     carto.addTo(map);
 
     let geo;
-    try {
-      const res = await fetch('./peru_departamental_simple.geojson');
-      if(!res.ok) throw new Error('geojson not loaded');
-      geo = await res.json();
-    } catch {
+    let loadedFromFile = false;
+    const geoCandidates = [
+      '/peru_departamental_simple.geojson',
+      './peru_departamental_simple.geojson',
+      'peru_departamental_simple.geojson'
+    ];
+
+    for(const candidate of geoCandidates) {
+      try {
+        const res = await fetch(candidate);
+        if(!res.ok) continue;
+        const data = await res.json();
+        if(Array.isArray(data.features) && data.features.length > 5) {
+          geo = data;
+          loadedFromFile = true;
+          break;
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    if(!geo) {
       geo = {
         type: 'FeatureCollection',
         features: [
@@ -635,48 +645,32 @@
       };
     }
 
-    const peruFill = L.geoJSON(geo, {
+    const isFallbackGeo = !loadedFromFile;
+
+    const peruDepartments = L.geoJSON(geo, {
       style: {
-        color: 'transparent',
-        weight: 0,
+        color: '#5f8fb2',
+        weight: isFallbackGeo ? 1.1 : 0.7,
+        opacity: isFallbackGeo ? 0.85 : 0.62,
         fillColor: '#8fbeb8',
-        fillOpacity: 0.68
+        fillOpacity: isFallbackGeo ? 0.45 : 0.34
       }
     }).addTo(map);
 
-    const peruBorders = L.geoJSON(geo, {
+    const peruTrace = L.geoJSON(geo, {
       style: {
-        color: '#4f7ea6',
-        weight: 1.2,
-        fillOpacity: 0
-      }
-    }).addTo(map);
-
-    const peruNeonGlow = L.geoJSON(geo, {
-      style: {
-        color: '#6ab8ff',
-        weight: 5,
-        opacity: 0.22,
+        color: '#2d87d7',
+        weight: isFallbackGeo ? 2.2 : 1.5,
+        opacity: 0.9,
         fillOpacity: 0,
-        className: 'peru-neon-glow'
+        dashArray: isFallbackGeo ? '6 5' : null
       }
     }).addTo(map);
 
-    const peruNeonCore = L.geoJSON(geo, {
-      style: {
-        color: '#5d8ec1',
-        weight: 1.6,
-        opacity: 0.85,
-        fillOpacity: 0,
-        className: 'peru-neon-core'
-      }
-    }).addTo(map);
+    peruTrace.bringToFront();
 
-    peruNeonGlow.bringToFront();
-    peruNeonCore.bringToFront();
-
-    if(peruFill.getBounds().isValid()) {
-      map.fitBounds(peruFill.getBounds(), { padding: [12, 12] });
+    if(peruDepartments.getBounds().isValid()) {
+      map.fitBounds(peruDepartments.getBounds(), { padding: [12, 12] });
     }
 
     const hubs = {
